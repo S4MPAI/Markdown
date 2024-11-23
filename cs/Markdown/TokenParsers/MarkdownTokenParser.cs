@@ -8,7 +8,18 @@ public class MarkdownTokenParser
 {
     private readonly CommonTokensReader reader = new();
     private readonly List<ITokenHandler> tokenHandlers = CreateHandlers();
-    private static List<ITokenHandler> CreateHandlers() => [];
+
+    private static List<ITokenHandler> CreateHandlers()
+    {
+        return new List<ITokenHandler>
+            { 
+                new EscapeTokenApplyHandler(), 
+                new UnderscoreTagTokensCreatingHandler(), 
+                new UnderscoreInNumberHandler() 
+            }
+            .OrderBy(x => x.Priority)
+            .ToList();
+    }
 
     public IEnumerable<Token> Parse(string text)
     {
