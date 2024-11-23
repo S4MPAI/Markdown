@@ -19,19 +19,14 @@ public class EscapeTokenApplyHandler : ITokenHandler
                 nextToken = tokens[i];
             }
             else if (i == tokens.Count - 1 || 
-                tokens[i + 1].Type != TokenType.Escape ||
-                tokens[i + 1].Type != TokenType.TagPart)
+                (tokens[i + 1].Type != TokenType.Escape &&
+                tokens[i + 1].Type != TokenType.TagPart))
             {
                 nextToken = Token.CreateWordToken(tokens[i].Content);
             }
-            else if (tokens[i + 1].Type == TokenType.Escape)
-            {
-                nextToken = Token.CreateWordToken(tokens[i + 1].Content);
-                i++;
-            }
             else
             {
-                nextToken = Token.CreateWordToken(tokens[i].Content + tokens[i + 1].Content);
+                nextToken = Token.CreateWordToken(tokens[i + 1].Content);
                 i++;
             }
             
