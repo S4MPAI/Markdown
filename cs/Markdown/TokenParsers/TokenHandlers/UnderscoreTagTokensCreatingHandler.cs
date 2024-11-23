@@ -15,8 +15,10 @@ public class UnderscoreTagTokensCreatingHandler : ITokenHandler
         {
             if (i == tokens.Count || IsNotUnderscoreTagPart(tokens[i - 1]) || IsNotUnderscoreTagPart(tokens[i]))
             {
-                var token = Token.TryCreateTagToken(tokens[i - 1].Content);
-                handledTokens.Add(token ?? tokens[i - 1]);
+                var token = IsNotUnderscoreTagPart(tokens[i - 1]) ?
+                    tokens[i - 1] :
+                    Token.TryCreateTagToken(tokens[i - 1].Content) ?? tokens[i - 1];
+                handledTokens.Add(token);
             }
             else
             {
