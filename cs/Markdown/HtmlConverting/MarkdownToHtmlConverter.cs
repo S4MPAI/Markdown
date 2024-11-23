@@ -26,7 +26,7 @@ public class MarkdownToHtmlConverter : IMarkdownConverter
         foreach (var tagConverter in tagConverters)
             convertedTokens = tagConverter.ConvertToHtml(convertedTokens);
 
-        foreach (var text in convertedTokens.Select(token => token.Text))
+        foreach (var text in convertedTokens.Select(token => token.Content))
             result.Append(text);
         
         return result.ToString();
