@@ -35,6 +35,12 @@ public struct Token
     
     public static Token? TryCreateTagToken(string content)
     {
-        return null;
+        return content switch
+        {
+            "_" => new Token(content, TokenType.Tag, TagType.Italic),
+            "__" => new Token(content, TokenType.Tag, TagType.Strong),
+            "#" => new Token(content, TokenType.Tag, TagType.Header),
+            _ => null
+        };
     }
 }
