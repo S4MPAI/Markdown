@@ -8,15 +8,12 @@ public class MarkdownToHtmlConverter : IMarkdownConverter
 {
     private readonly List<IHtmlTagConverter> tagConverters = CreateTagConverters();
 
-    private static List<IHtmlTagConverter> CreateTagConverters()
-    {
-        return new List<IHtmlTagConverter>
-        {
-            new HeaderTagConverter(),
+    private static List<IHtmlTagConverter> CreateTagConverters() =>
+        [
+            //new HeaderTagConverter(),
             new ItalicTagConverter(),
             new StrongTagConverter()
-        };
-    }
+        ];
 
     public string Convert(IEnumerable<Token> tokens)
     {
