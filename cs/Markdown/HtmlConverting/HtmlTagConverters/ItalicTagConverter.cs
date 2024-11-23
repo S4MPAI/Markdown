@@ -2,10 +2,7 @@ using Markdown.Tokens;
 
 namespace Markdown.HtmlConverting.HtmlTagConverters;
 
-public class ItalicTagConverter : IHtmlTagConverter
+public class ItalicTagConverter : BaseTextTagConverter
 {
-    public IList<Token> ConvertToHtml(IList<Token> tokens)
-    {
-        throw new NotImplementedException();
-    }
+    protected override TagType NeededTag => TagType.Italic;
 }
