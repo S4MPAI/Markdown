@@ -2,5 +2,5 @@ namespace Markdown.Tags;
 
 public interface ITagFactory
 {
-    public Tag? TryCreateTag(string tagValue);
+    public string? TryConvertTag(string tagValue);
 }
