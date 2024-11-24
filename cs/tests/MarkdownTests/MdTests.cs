@@ -64,5 +64,8 @@ public class MdTests
         new TestCaseData("# Заголовок __с _разными_ символами__")
             .Returns("<h1>Заголовок <strong>с <em>разными</em> символами</strong></h1>")
             .SetName("HeaderWithOtherTags"),
+        new TestCaseData("_Теги в разных абзацах\nне должны считаться_ выделением")
+            .Returns("_Теги в разных абзацах\nне должны считаться_ выделением")
+            .SetName("TagsInDifferentParagraphs"),
     };
 }
