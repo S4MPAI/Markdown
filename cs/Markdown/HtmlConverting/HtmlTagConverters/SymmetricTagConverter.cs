@@ -4,7 +4,7 @@ using Markdown.Extensions;
 
 namespace Markdown.HtmlConverting.HtmlTagConverters;
 
-public abstract class BaseTextTagConverter : IHtmlTagConverter
+public abstract class SymmetricTextTagConverter : IHtmlTagConverter
 {
     protected abstract TagType NeededTag { get; }
     
