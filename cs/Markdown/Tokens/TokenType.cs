@@ -6,7 +6,6 @@ public enum TokenType
     Digit,
     Word,
     NewLine,
-    TagPart,
     Tag,
     Escape
 }
