@@ -8,7 +8,7 @@ public abstract class BaseTextTagConverter : IHtmlTagConverter
 {
     protected abstract TagType NeededTag { get; }
     
-    public IList<Token> ConvertToHtml(IList<Token> tokens)
+    public IList<Token> ConvertToHtml(IReadOnlyList<Token> tokens)
     {
         var convertedTokens = new List<Token>();
         var tokenQueue = new Queue<Token>(tokens);
