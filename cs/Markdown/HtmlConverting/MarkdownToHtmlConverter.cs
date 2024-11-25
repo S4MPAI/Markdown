@@ -6,25 +6,42 @@ namespace Markdown.HtmlConverting;
 
 public class MarkdownToHtmlConverter : IMarkdownConverter
 {
-    private readonly List<IHtmlTagConverter> tagConverters = CreateTagConverters();
+    private readonly Dictionary<TagType, IHtmlTagConverter> tagConverters = CreateTagConverters();
 
-    private static List<IHtmlTagConverter> CreateTagConverters() =>
-        [
-            //new HeaderTagConverter(),
+    private static Dictionary<TagType, IHtmlTagConverter> CreateTagConverters()
+    {
+        return new List<BaseHtmlTagConverter>
+        {
+            new HeaderTagConverter(),
             new ItalicTagConverter(),
             new StrongTagConverter()
-        ];
+        }.ToDictionary<BaseHtmlTagConverter, TagType, IHtmlTagConverter>(
+            key => key.HandledTag, 
+            value => value);
+    }
 
     public string Convert(IEnumerable<Token> tokens)
     {
-        IList<Token> convertedTokens = tokens.ToArray();
+        IReadOnlyList<Token> convertedTokens = tokens.ToArray();
         var result = new StringBuilder();
-        
-        foreach (var tagConverter in tagConverters)
-            convertedTokens = tagConverter.ConvertToHtml(convertedTokens);
 
-        foreach (var text in convertedTokens.Select(token => token.Content))
-            result.Append(text);
+        for (int i = 0; i < convertedTokens.Count; i++)
+        {
+            var token = convertedTokens[i];
+            var tagType = Token.TryGetTagType(token);
+
+            if (tagType == null) 
+                continue;
+            
+            var converter = tagConverters[tagType.Value];
+            var nextPosition = i + 1;
+            var htmlText = converter.ConvertTokensToHtmlText(tagConverters,
+                convertedTokens,
+                nextPosition,
+                out var readTokens);
+            result.Append(htmlText);
+            i += readTokens;
+        }
         
         return result.ToString();
     }
