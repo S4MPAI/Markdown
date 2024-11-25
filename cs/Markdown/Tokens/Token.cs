@@ -2,15 +2,20 @@ namespace Markdown.Tokens;
 
 public struct Token
 {
-    public TagType? Tag { get; }
-    public TokenType Type { get; }
-    public string Content { get; }
+    private static readonly Dictionary<string, TagType> Tags = new()
+    {
+        {"_", TagType.Italic },
+        {"__", TagType.Strong },
+        {"#", TagType.Header }
+    };
 
-    private Token(string content, TokenType tokenType, TagType? tag = null)
+    public TokenType Type;
+    public string Content;
+
+    private Token(string content, TokenType tokenType)
     {
         Content = content;
         Type = tokenType;
-        Tag = tag;
     }
 
     public static Token CreateWordToken(string content) => 
@@ -27,20 +32,90 @@ public struct Token
             "\n" => new Token(content, TokenType.NewLine),
             "\r" => new Token(content, TokenType.NewLine),
             "\\" => new Token(content, TokenType.Escape),
-            "_" => new Token(content, TokenType.TagPart),
-            "#" => new Token(content, TokenType.TagPart),
             _ => null
         };
     }
     
-    public static Token? TryCreateTagToken(string content)
+    public static Token? TryCreateTagToken(string content, out TagType? tag)
     {
-        return content switch
+        tag = null;
+        
+        if (!Tags.TryGetValue(content, out var tagType)) 
+            return null;
+        
+        tag = tagType;
+        return new Token(content, TokenType.Tag);
+
+    }
+
+    public static TagType? TryGetTagType(Token token)
+    {
+        Tags.TryGetValue(token.Content, out var tagType);
+        
+        return tagType;
+    }
+
+    public static bool IsValidTokenTag(IReadOnlyList<Token> tokens, int tokenPosition)
+    {
+        var currentToken = tokens[tokenPosition];
+        if (currentToken.Type != TokenType.Tag || !Tags.TryGetValue(currentToken.Content, out var tagType))
+            return false;
+
+        return tagType switch
         {
-            "_" => new Token(content, TokenType.Tag, TagType.Italic),
-            "__" => new Token(content, TokenType.Tag, TagType.Strong),
-            "#" => new Token(content, TokenType.Tag, TagType.Header),
-            _ => null
+            TagType.Italic or TagType.Strong => IsValidStrongOrItalicTag(tokens, tokenPosition),
+            TagType.Header => IsValidHeaderTag(tokens, tokenPosition),
+            _ => false
         };
+    }
+
+
+
+    public static bool IsValidStrongOrItalicTag(IReadOnlyList<Token> tokens, int tokenPosition) => 
+        IsValidStrongOrItalicOpenTag(tokens, tokenPosition) || IsValidStrongOrItalicCloseTag(tokens, tokenPosition);
+
+    public static bool IsValidStrongOrItalicOpenTag(IReadOnlyList<Token> tokens, int tokenPosition)
+    {
+        CheckTokenInRange(tokens, tokenPosition);
+        var nextPosition = tokenPosition + 1;
+        
+        return nextPosition < tokens.Count && tokens[nextPosition].Type != TokenType.Space;
+    }
+    
+    public static bool IsValidStrongOrItalicCloseTag(IReadOnlyList<Token> tokens, int tokenPosition)
+    {
+        CheckTokenInRange(tokens, tokenPosition);
+        var previousPosition = tokenPosition - 1;
+        
+        return previousPosition >= 0 && tokens[previousPosition].Type != TokenType.Space;
+    }
+    
+    public static bool IsValidHeaderTag(IReadOnlyList<Token> tokens, int tokenPosition)
+    {
+        CheckTokenInRange(tokens, tokenPosition);
+        var previousPosition = tokenPosition - 1;
+        var nextPosition = tokenPosition + 1;
+        
+        return (tokenPosition == 0 || tokens[previousPosition].Type == TokenType.NewLine) && 
+               nextPosition < tokens.Count && 
+               tokens[nextPosition].Type == TokenType.Space;
+    }
+
+    private static void CheckTokenInRange(IReadOnlyList<Token> tokens, int tokenPosition)
+    {
+        if (tokenPosition >= tokens.Count || tokenPosition < 0)
+            throw new ArgumentException("Invalid token position", nameof(tokenPosition));
+    }
+
+    public static int FindNeededTagTypePosition(IReadOnlyList<Token> tokens, TagType neededTagType, int startPosition = 0)
+    {
+        for (var i = startPosition; i < tokens.Count; i++)
+        {
+            var currentToken = tokens[i];
+            if (currentToken.Type == TokenType.Tag && TryGetTagType(currentToken) == neededTagType)
+                return i;
+        }
+        
+        return -1;
     }
 }
