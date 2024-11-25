@@ -9,28 +9,27 @@ public class EscapeTokenApplyHandler : ITokenHandler
     public IList<Token> Handle(IList<Token> tokens)
     {
         var handledTokens = new List<Token>();
+        Token? previousToken = null;
         
-        for (var i = 0; i < tokens.Count; i++)
+        foreach (var token in tokens)
         {
-            Token nextToken;
-            
-            if (tokens[i].Type != TokenType.Escape)
+            if (previousToken?.Type == TokenType.Escape)
             {
-                nextToken = tokens[i];
+                if (token.Type is not (TokenType.Tag or TokenType.Escape))
+                    handledTokens.Add(Token.CreateWordToken(previousToken.Value.Content));
+
+                handledTokens.Add(Token.CreateWordToken(token.Content));
+                previousToken = null;
             }
-            else if (i == tokens.Count - 1 || 
-                (tokens[i + 1].Type != TokenType.Escape &&
-                tokens[i + 1].Type != TokenType.TagPart))
+            else if (token.Type == TokenType.Escape)
             {
-                nextToken = Token.CreateWordToken(tokens[i].Content);
+                previousToken = token;
             }
             else
             {
-                nextToken = Token.CreateWordToken(tokens[i + 1].Content);
-                i++;
+                handledTokens.Add(token);
+                previousToken = token;
             }
-            
-            handledTokens.Add(nextToken);
         }
         
         return handledTokens;
