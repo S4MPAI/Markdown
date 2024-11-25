@@ -2,7 +2,4 @@ using Markdown.Tokens;
 
 namespace Markdown.HtmlConverting.HtmlTagConverters;
 
-public class StrongTagConverter : SymmetricTextTagConverter
-{
-    protected override TagType NeededTag => TagType.Strong;
-}
+public class StrongTagConverter() : ClosedTagConverter(TagType.Strong);
