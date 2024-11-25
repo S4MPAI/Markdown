@@ -1,46 +1,22 @@
 using System.Text;
+using Markdown.Tokens;
 
 namespace Markdown.Tags;
 
 public static class HtmlTagsCreator
 {
-    private static Dictionary<string, string> Tags { get; } = new()
+    private static Dictionary<TagType, string> Tags { get; } = new()
     {
-        { "_", "em" },
-        { "__", "strong" },
-        { "#", "h1" }
+        { TagType.Italic, "em" },
+        { TagType.Header, "strong" },
+        { TagType.Strong, "h1" }
     };
 
-    private static readonly List<ITagFactory> SpecificTagsFactories = GetTagsFactories();
-
-    private static List<ITagFactory> GetTagsFactories()
-    {
-        return [];
-    }
-
-    public static string TryConvertMdTag(string tagValue)
-    {
-        Tags.TryGetValue(tagValue, out var tag);
-        
-        if (tag != null)
-            return tag;
-
-        foreach (var tagFactory in SpecificTagsFactories)
-        {
-            tag = tagFactory.TryConvertTag(tagValue);
-            
-            if (tag != null)
-                return tag;
-        }
-        
-        return tag;
-    }
-
-    public static string CreateOpenTag(string tagName, List<(string, string)>? parameters = null)
+    public static string CreateOpenTag(TagType tagType, List<(string, string)>? parameters = null)
     {
         var tagBuilder = new StringBuilder();
         tagBuilder.Append('<');
-        tagBuilder.Append(tagName);
+        tagBuilder.Append(Tags[tagType]);
         
         if (parameters != null)
         {
@@ -58,5 +34,5 @@ public static class HtmlTagsCreator
         return tagBuilder.ToString();
     } 
     
-    public static string CreateCloseTag(string tagName) => "</" + tagName + ">";
+    public static string CreateCloseTag(TagType tagType) => "</" + Tags[tagType] + ">";
 }
