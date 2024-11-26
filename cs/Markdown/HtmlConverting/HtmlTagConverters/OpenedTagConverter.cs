@@ -1,5 +1,4 @@
 using System.Text;
-using Markdown.Tags;
 using Markdown.Tokens;
 
 namespace Markdown.HtmlConverting.HtmlTagConverters;
@@ -26,7 +25,7 @@ public class OpenedTagConverter(TagType tagType, TokenType endTokenType) : BaseH
                 return stringBuilder.ToString();
             }
             
-            var tagType = Token.TryGetTagType(token);
+            var tagType = Token.GetTagType(token);
             if (tagType != null)
             {
                 var convertedString = ConvertTokensToAnotherTag(converters, tokens, tagType.Value, ref i);
