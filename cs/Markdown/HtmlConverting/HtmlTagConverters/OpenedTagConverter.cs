@@ -25,7 +25,7 @@ public class OpenedTagConverter(TagType tagType, TokenType endTokenType) : BaseH
                 return stringBuilder.ToString();
             }
             
-            var tagType = Token.GetTagType(token);
+            var tagType = Token.GetTagTypeByOpenTag(token);
             if (tagType != null)
             {
                 var convertedString = ConvertTokensToAnotherTag(converters, tokens, tagType.Value, ref i);
