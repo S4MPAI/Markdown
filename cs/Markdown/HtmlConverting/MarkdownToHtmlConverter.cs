@@ -28,7 +28,7 @@ public class MarkdownToHtmlConverter : IMarkdownConverter
         for (int i = 0; i < convertedTokens.Count; i++)
         {
             var token = convertedTokens[i];
-            var tagType = Token.TryGetTagType(token);
+            var tagType = Token.GetTagType(token);
 
             if (tagType == null) 
                 continue;
