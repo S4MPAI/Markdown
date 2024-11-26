@@ -6,5 +6,5 @@ public interface ITokenHandler
 {
     public int Priority { get; }
 
-    public IList<Token> Handle(IList<Token> tokens);
+    public IReadOnlyList<Token> Handle(IReadOnlyList<Token> tokens);
 }
