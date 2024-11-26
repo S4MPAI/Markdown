@@ -14,7 +14,7 @@ public class MarkdownTokenParser
         return new List<ITokenHandler>
             { 
                 new EscapeTokenApplyHandler(), 
-                new UnderscoreInNumberHandler() 
+                new IncorrectTagTokensHandler(),
             }
             .OrderBy(x => x.Priority)
             .ToList();
@@ -22,7 +22,7 @@ public class MarkdownTokenParser
 
     public IEnumerable<Token> Parse(string text)
     {
-        IList<Token> tokens = reader.ReadTokens(text).ToList();
+        IReadOnlyList<Token> tokens = reader.ReadTokens(text).ToList();
         
         foreach (var tokenHandler in tokenHandlers)
             tokens = tokenHandler.Handle(tokens);
