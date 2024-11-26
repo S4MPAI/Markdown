@@ -6,8 +6,8 @@ namespace Markdown.TokenParsers.TokenHandlers;
 public class UnderscoreInNumberHandler : ITokenHandler
 {
     public int Priority => 2;
-
-    public IList<Token> Handle(IList<Token> tokens)
+    
+    public IReadOnlyList<Token> Handle(IReadOnlyList<Token> tokens)
     {
         var handledTokens = new List<Token> { tokens[0] };
 
@@ -42,7 +42,7 @@ public class UnderscoreInNumberHandler : ITokenHandler
         return handledTokens;
     }
 
-    private static Token CombineTokensInOne(IList<Token> tokens, int start, int length)
+    private static Token CombineTokensInOne(IReadOnlyList<Token> tokens, int start, int length)
     {
         var stringBuilder = new StringBuilder();
 
