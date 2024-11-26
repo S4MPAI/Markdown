@@ -14,7 +14,6 @@ public class MarkdownTokenParser
         return new List<ITokenHandler>
             { 
                 new EscapeTokenApplyHandler(), 
-                new UnderscoreTagTokensCreatingHandler(), 
                 new UnderscoreInNumberHandler() 
             }
             .OrderBy(x => x.Priority)
