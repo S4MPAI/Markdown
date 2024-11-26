@@ -6,7 +6,7 @@ public struct Token
     {
         {"_", TagType.Italic },
         {"__", TagType.Strong },
-        {"#", TagType.Header }
+        {"# ", TagType.Header }
     };
 
     public TokenType Type;
@@ -29,8 +29,7 @@ public struct Token
         return content switch
         {
             " " => new Token(content, TokenType.Space),
-            "\n" => new Token(content, TokenType.NewLine),
-            "\r" => new Token(content, TokenType.NewLine),
+            "\n" or "\r" => new Token(content, TokenType.NewLine),
             "\\" => new Token(content, TokenType.Escape),
             _ => null
         };
@@ -48,12 +47,15 @@ public struct Token
 
     }
 
-    public static TagType? TryGetTagType(Token token)
+    public static TagType? GetTagType(Token token)
     {
         Tags.TryGetValue(token.Content, out var tagType);
         
         return tagType;
     }
+
+    public static bool IsTagStartPart(string content) =>
+        Tags.Any(tag => tag.Key.StartsWith(content));
 
     public static bool IsValidTokenTag(IReadOnlyList<Token> tokens, int tokenPosition)
     {
@@ -68,9 +70,7 @@ public struct Token
             _ => false
         };
     }
-
-
-
+    
     public static bool IsValidStrongOrItalicTag(IReadOnlyList<Token> tokens, int tokenPosition) => 
         IsValidStrongOrItalicOpenTag(tokens, tokenPosition) || IsValidStrongOrItalicCloseTag(tokens, tokenPosition);
 
@@ -105,17 +105,5 @@ public struct Token
     {
         if (tokenPosition >= tokens.Count || tokenPosition < 0)
             throw new ArgumentException("Invalid token position", nameof(tokenPosition));
-    }
-
-    public static int FindNeededTagTypePosition(IReadOnlyList<Token> tokens, TagType neededTagType, int startPosition = 0)
-    {
-        for (var i = startPosition; i < tokens.Count; i++)
-        {
-            var currentToken = tokens[i];
-            if (currentToken.Type == TokenType.Tag && TryGetTagType(currentToken) == neededTagType)
-                return i;
-        }
-        
-        return -1;
     }
 }
