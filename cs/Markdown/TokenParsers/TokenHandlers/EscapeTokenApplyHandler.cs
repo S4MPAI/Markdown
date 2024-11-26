@@ -6,7 +6,7 @@ public class EscapeTokenApplyHandler : ITokenHandler
 {
     public int Priority => 1;
 
-    public IList<Token> Handle(IList<Token> tokens)
+    public IReadOnlyList<Token> Handle(IReadOnlyList<Token> tokens)
     {
         var handledTokens = new List<Token>();
         Token? previousToken = null;
