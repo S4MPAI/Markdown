@@ -14,8 +14,8 @@ public class CommonTokensReader : ITokenReader
 
             if (tokenType != TokenType.Tag && tokenType != TokenType.Word)
                 yield return Token.TryCreateCommonToken(currentChar)!.Value;
-            
-            yield return CreateTokenAndMovePointer(text, tokenType, ref i);
+            else
+                yield return CreateTokenAndMovePointer(text, tokenType, ref i);
         }
     }
 
@@ -50,7 +50,8 @@ public class CommonTokensReader : ITokenReader
 
     private static bool IsTokenEnded(string nextChar, string content, TokenType tokenType)
     {
-        if (Token.TryCreateCommonToken(nextChar) != null || Token.IsTagStartPart(content))
+        if (tokenType == TokenType.Word &&
+            (Token.TryCreateCommonToken(nextChar) != null || Token.IsTagStartPart(nextChar)))
             return true;
         return Token.TryCreateTagToken(content, out _) != null;
     }
