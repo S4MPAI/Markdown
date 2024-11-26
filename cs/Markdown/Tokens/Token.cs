@@ -1,12 +1,14 @@
+using Markdown.Tags;
+
 namespace Markdown.Tokens;
 
 public struct Token
 {
-    private static readonly Dictionary<string, TagType> Tags = new()
+    private static readonly List<ITag> Tags = new()
     {
-        {"_", TagType.Italic },
-        {"__", TagType.Strong },
-        {"# ", TagType.Header }
+        new HeaderTag(),
+        new ItalicTag(),
+        new StrongTag()
     };
 
     public TokenType Type;
@@ -35,75 +37,23 @@ public struct Token
         };
     }
     
-    public static Token? TryCreateTagToken(string content, out TagType? tag)
+    public static Token? TryCreateTagToken(string content, out TagType? tagType)
     {
-        tag = null;
-        
-        if (!Tags.TryGetValue(content, out var tagType)) 
-            return null;
-        
-        tag = tagType;
-        return new Token(content, TokenType.Tag);
+        tagType = null;
 
-    }
+        var neededTag = Tags.FirstOrDefault(tag => tag.IsTag(content));
 
-    public static TagType? GetTagType(Token token)
-    {
-        Tags.TryGetValue(token.Content, out var tagType);
-        
-        return tagType;
+        if (neededTag != null)
+            return new Token(content, TokenType.Tag);
+        return null;
     }
 
     public static bool IsTagStartPart(string content) =>
-        Tags.Any(tag => tag.Key.StartsWith(content));
+        Tags.Any(tag => tag.IsStartOfTag(content));
 
-    public static bool IsValidTokenTag(IReadOnlyList<Token> tokens, int tokenPosition)
-    {
-        var currentToken = tokens[tokenPosition];
-        if (currentToken.Type != TokenType.Tag || !Tags.TryGetValue(currentToken.Content, out var tagType))
-            return false;
-
-        return tagType switch
-        {
-            TagType.Italic or TagType.Strong => IsValidStrongOrItalicTag(tokens, tokenPosition),
-            TagType.Header => IsValidHeaderTag(tokens, tokenPosition),
-            _ => false
-        };
-    }
+    public static TagType? GetTagTypeByOpenTag(Token token) =>
+        Tags.FirstOrDefault(x => x.IsOpenTag(token))?.TagType;
     
-    public static bool IsValidStrongOrItalicTag(IReadOnlyList<Token> tokens, int tokenPosition) => 
-        IsValidStrongOrItalicOpenTag(tokens, tokenPosition) || IsValidStrongOrItalicCloseTag(tokens, tokenPosition);
-
-    public static bool IsValidStrongOrItalicOpenTag(IReadOnlyList<Token> tokens, int tokenPosition)
-    {
-        CheckTokenInRange(tokens, tokenPosition);
-        var nextPosition = tokenPosition + 1;
-        
-        return nextPosition < tokens.Count && tokens[nextPosition].Type != TokenType.Space;
-    }
-    
-    public static bool IsValidStrongOrItalicCloseTag(IReadOnlyList<Token> tokens, int tokenPosition)
-    {
-        CheckTokenInRange(tokens, tokenPosition);
-        var previousPosition = tokenPosition - 1;
-        
-        return previousPosition >= 0 && tokens[previousPosition].Type != TokenType.Space;
-    }
-    
-    public static bool IsValidHeaderTag(IReadOnlyList<Token> tokens, int tokenPosition)
-    {
-        CheckTokenInRange(tokens, tokenPosition);
-        var previousPosition = tokenPosition - 1;
-        var nextPosition = tokenPosition + 1;
-        
-        return (tokenPosition == 0 || tokens[previousPosition].Type == TokenType.NewLine) && 
-               nextPosition < tokens.Count && 
-               tokens[nextPosition].Type == TokenType.Space;
-    }
-
-    private static void CheckTokenInRange(IReadOnlyList<Token> tokens, int tokenPosition)
-    {
-        if (tokenPosition >= tokens.Count || tokenPosition < 0)
-            throw new ArgumentException("Invalid token position", nameof(tokenPosition));
-    }
+    public static ITag? GetTagByOpenTag(Token token) => 
+        Tags.FirstOrDefault(x => x.IsOpenTag(token));
 }
