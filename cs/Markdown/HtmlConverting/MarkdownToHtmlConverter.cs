@@ -25,10 +25,10 @@ public class MarkdownToHtmlConverter : IMarkdownConverter
         IReadOnlyList<Token> convertedTokens = tokens.ToArray();
         var result = new StringBuilder();
 
-        for (int i = 0; i < convertedTokens.Count; i++)
+        for (var i = 0; i < convertedTokens.Count; i++)
         {
             var token = convertedTokens[i];
-            var tagType = Token.GetTagType(token);
+            var tagType = Token.GetTagTypeByOpenTag(token);
 
             if (tagType == null) 
                 continue;
