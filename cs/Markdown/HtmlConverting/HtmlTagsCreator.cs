@@ -1,7 +1,7 @@
 using System.Text;
 using Markdown.Tokens;
 
-namespace Markdown.Tags;
+namespace Markdown.HtmlConverting;
 
 public static class HtmlTagsCreator
 {
