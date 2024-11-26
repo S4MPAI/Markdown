@@ -1,5 +1,4 @@
 using System.Text;
-using Markdown.Tags;
 using Markdown.Tokens;
 
 namespace Markdown.HtmlConverting.HtmlTagConverters;
@@ -19,7 +18,7 @@ public class ClosedTagConverter(TagType tagType) : BaseHtmlTagConverter(tagType)
         for (var i = start; i < tokens.Count; i++)
         {
             var token = tokens[i];
-            var tagType = Token.TryGetTagType(token);
+            var tagType = Token.GetTagType(token);
 
             if (tagType != null)
             {
