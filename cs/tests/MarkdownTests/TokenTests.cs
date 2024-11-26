@@ -21,8 +21,8 @@ public class TokenTests
     [TestCase("\n", TokenType.NewLine)]
     [TestCase("\r", TokenType.NewLine)]
     [TestCase("\\", TokenType.Escape)]
-    [TestCase("_", TokenType.TagPart)]
-    [TestCase("#", TokenType.TagPart)]
+    [TestCase("_", TokenType.Tag)]
+    [TestCase("#", TokenType.Tag)]
     public void TryCreateCommonToken_ShouldReturnExpectedToken(string content, TokenType expectedType)
     {
         var actualResult = Token.TryCreateCommonToken(content);
@@ -48,14 +48,12 @@ public class TokenTests
     private static void AssertToken(
         Token actualResult, 
         string expectedContent, 
-        TokenType expectedType, 
-        TagType? expectedTag = null)
+        TokenType expectedType)
     {
         using (new AssertionScope())
         {
             actualResult.Content.Should().Be(expectedContent);
             actualResult.Type.Should().Be(expectedType);
-            actualResult.Tag.Should().Be(expectedTag);
         }
     }
 }
