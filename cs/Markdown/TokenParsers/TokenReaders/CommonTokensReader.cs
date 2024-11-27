@@ -1,4 +1,5 @@
 using Markdown.Extensions;
+using Markdown.MdParsing.Interfaces;
 using Markdown.Tokens;
 
 namespace Markdown.TokenParsers.TokenReaders;
@@ -9,7 +10,7 @@ public class CommonTokensReader : ITokenReader
     {
         for (var i = 0; i < text.Length; i++)
         {
-            var currentChar = text.GetChar(i);
+            var currentChar = text.GetSymbol(i);
 
             if (Token.TryCreateCommonToken(currentChar, out var token))
                 yield return token;
@@ -25,7 +26,7 @@ public class CommonTokensReader : ITokenReader
     {
         var content = "";
 
-        while (i < text.Length && !IsTokenEnded(text.GetChar(i), content, tokenType))
+        while (i < text.Length && !IsTokenEnded(text.GetSymbol(i), content, tokenType))
         {
             content += text[i];
             i++;

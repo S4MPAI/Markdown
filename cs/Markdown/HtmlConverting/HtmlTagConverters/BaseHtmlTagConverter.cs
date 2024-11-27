@@ -1,4 +1,3 @@
-using System.Text;
 using Markdown.Tokens;
 
 namespace Markdown.HtmlConverting.HtmlTagConverters;
