@@ -1,8 +1,8 @@
 using Markdown.Tokens;
 
-namespace Markdown.HtmlConverting;
+namespace Markdown.MdParsing.Interfaces;
 
-public interface IMarkdownConverter
+public interface ITokensConverter
 {
     public string Convert(IEnumerable<Token> tokens);
 }
