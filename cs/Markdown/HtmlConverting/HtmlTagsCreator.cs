@@ -18,15 +18,12 @@ public static class HtmlTagsCreator
         tagBuilder.Append('<');
         tagBuilder.Append(Tags[tagType]);
         
-        if (parameters != null)
+        foreach (var parameter in parameters ?? new())
         {
-            foreach (var parameter in parameters)
-            {
-                tagBuilder.Append(' ');
-                tagBuilder.Append(parameter.Item1);
-                tagBuilder.Append('=');
-                tagBuilder.Append(parameter.Item2);
-            }
+            tagBuilder.Append(' ');
+            tagBuilder.Append(parameter.Item1);
+            tagBuilder.Append('=');
+            tagBuilder.Append(parameter.Item2);
         }
 
         tagBuilder.Append('>');
