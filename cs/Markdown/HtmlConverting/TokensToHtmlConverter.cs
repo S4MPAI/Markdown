@@ -21,14 +21,13 @@ public class TokensToHtmlConverter : ITokensConverter
             value => value);
     }
 
-    public string Convert(IEnumerable<Token> tokens)
+    public string Convert(IReadOnlyList<Token> tokens)
     {
-        IReadOnlyList<Token> convertedTokens = tokens.ToArray();
         var result = new StringBuilder();
 
-        for (var i = 0; i < convertedTokens.Count; i++)
+        for (var i = 0; i < tokens.Count; i++)
         {
-            var token = convertedTokens[i];
+            var token = tokens[i];
 
             if (!Token.TryGetTagTypeByOpenTag(token, out var tagType)) 
                 continue;
@@ -36,7 +35,7 @@ public class TokensToHtmlConverter : ITokensConverter
             var converter = tagConverters[tagType];
             var nextPosition = i + 1;
             var htmlText = converter.ConvertTokensToHtmlText(tagConverters,
-                convertedTokens,
+                tokens,
                 nextPosition,
                 out var readTokens);
             result.Append(htmlText);
