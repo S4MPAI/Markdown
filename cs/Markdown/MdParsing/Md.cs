@@ -1,15 +1,15 @@
 using Markdown.HtmlConverting;
-using Markdown.TokenParsers;
+using Markdown.MdParsing.Interfaces;
 using Markdown.TokenParsers.TokenHandlers;
 using Markdown.TokenParsers.TokenReaders;
 using Markdown.Tokens;
 
-namespace Markdown;
+namespace Markdown.MdParsing;
 
 public class Md
 {
-    private readonly IMarkdownConverter converter = new MarkdownToHtmlConverter();
-    private readonly CommonTokensReader reader = new();
+    private readonly ITokensConverter converter = new TokensToHtmlConverter();
+    private readonly ITokenReader reader = new CommonTokensReader();
     private readonly List<ITokenHandler> tokenHandlers = CreateHandlers();
 
     private static List<ITokenHandler> CreateHandlers()
