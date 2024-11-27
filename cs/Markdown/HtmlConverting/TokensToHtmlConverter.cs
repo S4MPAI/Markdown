@@ -1,10 +1,11 @@
 using System.Text;
 using Markdown.HtmlConverting.HtmlTagConverters;
+using Markdown.MdParsing.Interfaces;
 using Markdown.Tokens;
 
 namespace Markdown.HtmlConverting;
 
-public class MarkdownToHtmlConverter : IMarkdownConverter
+public class TokensToHtmlConverter : ITokensConverter
 {
     private readonly Dictionary<TagType, IHtmlTagConverter> tagConverters = CreateTagConverters();
 
