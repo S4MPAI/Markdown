@@ -11,9 +11,9 @@ public abstract class BaseHtmlTagConverter(TagType tagType) : IHtmlTagConverter
         Dictionary<TagType, IHtmlTagConverter> converters,
         IReadOnlyList<Token> tokens,
         int start,
-        out int readedTokens);
+        out int readTokens);
     
-    protected static string ConvertTokensToAnotherTag(
+    protected static string ConvertTokensToHtmlTextInTag(
         Dictionary<TagType, IHtmlTagConverter> converters,
         IReadOnlyList<Token> tokens,
         TagType tagType,
@@ -21,8 +21,8 @@ public abstract class BaseHtmlTagConverter(TagType tagType) : IHtmlTagConverter
     {
         var tagConverter = converters[tagType];
         var convertedString = 
-            tagConverter.ConvertTokensToHtmlText(converters, tokens, currentPosition + 1, out var readedTokens);
-        currentPosition += readedTokens;
+            tagConverter.ConvertTokensToHtmlText(converters, tokens, currentPosition + 1, out var readTokens);
+        currentPosition += readTokens;
         return convertedString;
     }
 }

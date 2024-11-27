@@ -10,25 +10,15 @@ public class CommonTokensReader : ITokenReader
         for (var i = 0; i < text.Length; i++)
         {
             var currentChar = text.GetChar(i);
-            var tokenType = GetTokenType(currentChar);
 
-            if (tokenType != TokenType.Tag && tokenType != TokenType.Word)
-                yield return Token.TryCreateCommonToken(currentChar)!.Value;
+            if (Token.TryCreateCommonToken(currentChar, out var token))
+                yield return token;
             else
+            {
+                var tokenType = Token.IsTagStartPart(currentChar) ? TokenType.Tag : TokenType.Word;
                 yield return CreateTokenAndMovePointer(text, tokenType, ref i);
+            }
         }
-    }
-
-    private static TokenType GetTokenType(string content)
-    {
-        var token = Token.TryCreateCommonToken(content);
-
-        if (token != null)
-            return token.Value.Type;
-        
-        var isTag = Token.IsTagStartPart(content);
-        
-        return isTag ? TokenType.Tag : TokenType.Word;
     }
     
     private static Token CreateTokenAndMovePointer(string text, TokenType tokenType, ref int i)
@@ -43,16 +33,17 @@ public class CommonTokensReader : ITokenReader
 
         i--;
 
-        return tokenType == TokenType.Tag
-            ? Token.TryCreateTagToken(content, out _)!.Value
-            : Token.CreateWordToken(content);
+        if (tokenType == TokenType.Tag && Token.TryCreateTagToken(content, out var token))
+            return token;
+
+        return Token.CreateWordToken(content);
     }
 
     private static bool IsTokenEnded(string nextChar, string content, TokenType tokenType)
     {
         if (tokenType == TokenType.Word &&
-            (Token.TryCreateCommonToken(nextChar) != null || Token.IsTagStartPart(nextChar)))
+            (Token.TryCreateCommonToken(nextChar, out _) || Token.IsTagStartPart(nextChar)))
             return true;
-        return Token.TryCreateTagToken(content, out _) != null;
+        return Token.TryCreateTagToken(content, out _);
     }
 }

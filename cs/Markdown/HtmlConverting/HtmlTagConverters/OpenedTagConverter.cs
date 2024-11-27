@@ -9,11 +9,11 @@ public class OpenedTagConverter(TagType tagType, TokenType endTokenType) : BaseH
         Dictionary<TagType, IHtmlTagConverter> converters,
         IReadOnlyList<Token> tokens,
         int start,
-        out int readedTokens)
+        out int readTokens)
     {
         var stringBuilder = new StringBuilder();
         stringBuilder.Append(HtmlTagsCreator.CreateOpenTag(HandledTag));
-        readedTokens = 0;
+        readTokens = 0;
         
         for (var i = start; i < tokens.Count; i++)
         {
@@ -21,14 +21,13 @@ public class OpenedTagConverter(TagType tagType, TokenType endTokenType) : BaseH
             if (token.Type == endTokenType)
             {
                 stringBuilder.Append(HtmlTagsCreator.CreateCloseTag(HandledTag));
-                readedTokens = i - start + 1;
+                readTokens = i - start + 1;
                 return stringBuilder.ToString();
             }
             
-            var tagType = Token.GetTagTypeByOpenTag(token);
-            if (tagType != null)
+            if (Token.TryGetTagTypeByOpenTag(token, out var tagType))
             {
-                var convertedString = ConvertTokensToAnotherTag(converters, tokens, tagType.Value, ref i);
+                var convertedString = ConvertTokensToHtmlTextInTag(converters, tokens, tagType, ref i);
                 stringBuilder.Append(convertedString);
             }
             else 
@@ -37,7 +36,7 @@ public class OpenedTagConverter(TagType tagType, TokenType endTokenType) : BaseH
             }
         }
         
-        readedTokens = tokens.Count - start;
+        readTokens = tokens.Count - start;
         return stringBuilder.ToString();
     }
 }

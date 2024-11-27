@@ -28,12 +28,11 @@ public class MarkdownToHtmlConverter : IMarkdownConverter
         for (var i = 0; i < convertedTokens.Count; i++)
         {
             var token = convertedTokens[i];
-            var tagType = Token.GetTagTypeByOpenTag(token);
 
-            if (tagType == null) 
+            if (!Token.TryGetTagTypeByOpenTag(token, out var tagType)) 
                 continue;
             
-            var converter = tagConverters[tagType.Value];
+            var converter = tagConverters[tagType];
             var nextPosition = i + 1;
             var htmlText = converter.ConvertTokensToHtmlText(tagConverters,
                 convertedTokens,

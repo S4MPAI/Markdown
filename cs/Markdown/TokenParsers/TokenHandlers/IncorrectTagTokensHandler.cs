@@ -18,9 +18,8 @@ public class IncorrectTagTokensHandler : ITokenHandler
                 continue;
             }
             
-            var tag = Token.GetTagByOpenTag(token);
-            
-            if (tag != null && (tag.IsCorrectOpenTag(tokens, i) || tag.IsCorrectCloseTag(tokens, i)))
+            if (Token.TryGetTagByOpenTag(token, out var tag) && 
+                (tag!.IsCorrectOpenTag(tokens, i) || tag.IsCorrectCloseTag(tokens, i)))
                 result.Add(token);
             else
                 result.Add(Token.CreateWordToken(token.Content));

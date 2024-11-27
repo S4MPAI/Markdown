@@ -2,17 +2,17 @@ using Markdown.Tags;
 
 namespace Markdown.Tokens;
 
-public struct Token
+public struct Token : IEquatable<Token>
 {
-    private static readonly List<ITag> Tags = new()
-    {
+    private static readonly List<ITag> Tags =
+    [
         new HeaderTag(),
         new ItalicTag(),
         new StrongTag()
-    };
+    ];
 
-    public TokenType Type;
-    public string Content;
+    public readonly TokenType Type;
+    public readonly string Content;
 
     private Token(string content, TokenType tokenType)
     {
@@ -23,37 +23,69 @@ public struct Token
     public static Token CreateWordToken(string content) => 
         new(content, TokenType.Word);
 
-    public static Token? TryCreateCommonToken(string content)
+    public static bool TryCreateCommonToken(string content, out Token token)
     {
         if (int.TryParse(content, out _))
-            return new Token(content, TokenType.Digit);
+        {
+            token = new Token(content, TokenType.Digit);
+            return true;
+        }
 
-        return content switch
+        token = content switch
         {
             " " => new Token(content, TokenType.Space),
             "\n" or "\r" => new Token(content, TokenType.NewLine),
             "\\" => new Token(content, TokenType.Escape),
-            _ => null
+            _ => default
         };
+        
+        return !token.Equals(default);
     }
     
-    public static Token? TryCreateTagToken(string content, out TagType? tagType)
+    public static bool TryCreateTagToken(string content, out Token token)
     {
-        tagType = null;
-
+        token = default;
         var neededTag = Tags.FirstOrDefault(tag => tag.IsTag(content));
 
-        if (neededTag != null)
-            return new Token(content, TokenType.Tag);
-        return null;
+        if (neededTag == null) 
+            return false;
+        
+        token = new Token(content, TokenType.Tag);
+        return true;
     }
 
     public static bool IsTagStartPart(string content) =>
         Tags.Any(tag => tag.IsStartOfTag(content));
 
-    public static TagType? GetTagTypeByOpenTag(Token token) =>
-        Tags.FirstOrDefault(x => x.IsOpenTag(token))?.TagType;
-    
-    public static ITag? GetTagByOpenTag(Token token) => 
-        Tags.FirstOrDefault(x => x.IsOpenTag(token));
+    public static bool TryGetTagTypeByOpenTag(Token token, out TagType tagType)
+    {
+        tagType = default;
+        if (!TryGetTagByOpenTag(token, out var tag)) 
+            return false;
+        
+        tagType = tag!.TagType;
+        return true;
+
+    }
+
+    public static bool TryGetTagByOpenTag(Token token, out ITag? tag)
+    {
+        tag = Tags.FirstOrDefault(x => x.IsOpenTag(token));
+        return tag != null;
+    }
+
+    public bool Equals(Token other)
+    {
+        return Type == other.Type && Content == other.Content;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is Token other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine((int)Type, Content);
+    }
 }

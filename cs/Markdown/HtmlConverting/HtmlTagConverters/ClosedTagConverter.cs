@@ -18,18 +18,17 @@ public class ClosedTagConverter(TagType tagType) : BaseHtmlTagConverter(tagType)
         for (var i = start; i < tokens.Count; i++)
         {
             var token = tokens[i];
-            var tagType = Token.GetTagTypeByOpenTag(token);
 
-            if (tagType != null)
+            if (Token.TryGetTagTypeByOpenTag(token, out var tagType))
             {
-                if (tagType.Value == HandledTag)
+                if (tagType == HandledTag)
                 {
                     stringBuilder.Append(HtmlTagsCreator.CreateCloseTag(HandledTag));
                     readTokens = i - start + 1;
                     return stringBuilder.ToString();
                 }
 
-                var convertedString = ConvertTokensToAnotherTag(converters, tokens, tagType.Value, ref i);
+                var convertedString = ConvertTokensToHtmlTextInTag(converters, tokens, tagType, ref i);
                 stringBuilder.Append(convertedString);
             }
             else 

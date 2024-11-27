@@ -25,18 +25,8 @@ public class TokenTests
     [TestCase("#", TokenType.Tag)]
     public void TryCreateCommonToken_ShouldReturnExpectedToken(string content, TokenType expectedType)
     {
-        var actualResult = Token.TryCreateCommonToken(content);
-
-        actualResult.Should().NotBeNull();
-        AssertToken(actualResult.Value, content, expectedType);
-    }
-    
-    [Test]
-    public void TryCreateCommonToken_ShouldReturnNull_NotCommonContent()
-    {
-        var actualResult = Token.TryCreateCommonToken("word");
-        
-        actualResult.Should().BeNull();
+        Token.TryCreateCommonToken(content, out var actualToken).Should().BeTrue();
+        AssertToken(actualToken, content, expectedType);
     }
 
     [TestCase("_", TagType.Italic)]

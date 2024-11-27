@@ -16,15 +16,16 @@ public class UnderscoreInNumberHandler : ITokenHandler
 
         while (tokenQueue.Count > 0)
         {
-            Token? currentToken = tokenQueue.Peek();
-            var tagType = Token.GetTagTypeByOpenTag(currentToken.Value);
-            if (tagType is not TagType.Italic and not TagType.Strong && previousToken is not { Type: TokenType.Digit })
+            var currentToken = tokenQueue.Peek();
+            if (IsNotStrongOrItalicTag(currentToken) || 
+                previousToken is not { Type: TokenType.Digit })
             {
                 handledTokens.Add(tokenQueue.Dequeue());
+                previousToken = currentToken;
             }
             else
             {
-                var (token, length) = MoveToTokenWithAnotherTag(tokenQueue);
+                var (token, length) = MoveToNotStrongOrItalicTagToken(tokenQueue);
 
                 if (token?.Type == TokenType.Digit)
                 {
@@ -33,10 +34,8 @@ public class UnderscoreInNumberHandler : ITokenHandler
                 }
                 else
                     handledTokens.AddRange(tokenQueue.Dequeue(length));
-                currentToken = null;
+                previousToken = null;
             }
-            
-            previousToken = currentToken;
         }
         
         handledTokens.Add(tokens[^1]);
@@ -44,15 +43,13 @@ public class UnderscoreInNumberHandler : ITokenHandler
         return handledTokens;
     }
 
-    private static (Token?, int position) MoveToTokenWithAnotherTag(IEnumerable<Token> tokens)
+    private static (Token?, int position) MoveToNotStrongOrItalicTagToken(IEnumerable<Token> tokens)
     {
         var i = 0;
         
         foreach (var token in tokens)
         {
-            var tagType = Token.GetTagTypeByOpenTag(token);
-
-            if (token.Type != TokenType.Tag && tagType is not TagType.Italic and not TagType.Strong)
+            if (IsNotStrongOrItalicTag(token))
                 return (token, i);
                 
             i++;
@@ -60,6 +57,11 @@ public class UnderscoreInNumberHandler : ITokenHandler
 
         return (null, -1);
     }
+
+    private static bool IsNotStrongOrItalicTag(Token token) =>
+        token.Type != TokenType.Tag || 
+        !Token.TryGetTagTypeByOpenTag(token, out var tagType) || 
+        tagType is not TagType.Italic and not TagType.Strong;
     
     private static Token CombineTokensInOne(Queue<Token> tokens, int length)
     {
