@@ -57,8 +57,16 @@ public abstract class TextTag : ITag
         if (end - start == 1 || !IsOpenTag(tokens[start]) || !IsCloseTag(tokens[end]))
             return false;
 
-        return  (end - start == 2 && tokens[start + 1].Type == TokenType.Word) ||
-                ((prevPos < 0 || tokens[prevPos].Type != TokenType.Word) && 
-                 (nextPos >= tokens.Count || tokens[nextPos].Type != TokenType.Word));
+        return  IsWordPartInTags(tokens, start, end) ||
+                IsPhraseInTags(tokens, prevPos, nextPos);
+    }
+
+    private static bool IsWordPartInTags(IReadOnlyList<Token> tokens, int start, int end) =>
+        end - start == 2 && tokens[start + 1].Type == TokenType.Word;
+    
+    private static bool IsPhraseInTags(IReadOnlyList<Token> tokens, int prevPos, int nextPos)
+    {
+        return (prevPos < 0 || tokens[prevPos].Type != TokenType.Word) && 
+               (nextPos >= tokens.Count || tokens[nextPos].Type != TokenType.Word);
     }
 }
