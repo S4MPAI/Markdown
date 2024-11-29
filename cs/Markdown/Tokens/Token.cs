@@ -65,7 +65,6 @@ public struct Token : IEquatable<Token>
         
         tagType = tag!.TagType;
         return true;
-
     }
 
     public static bool TryGetTagByOpenTag(Token token, out ITag? tag)
@@ -74,18 +73,27 @@ public struct Token : IEquatable<Token>
         return tag != null;
     }
 
-    public bool Equals(Token other)
+    public static bool TryGetTagTypeByCloseTag(Token token, out TagType tagType)
     {
-        return Type == other.Type && Content == other.Content;
+        tagType = default;
+        if (!TryGetTagByCloseTag(token, out var tag))
+            return false;
+        tagType = tag!.TagType;
+        return true;
     }
 
-    public override bool Equals(object? obj)
+    public static bool TryGetTagByCloseTag(Token token, out ITag? tag)
     {
-        return obj is Token other && Equals(other);
+        tag = Tags.FirstOrDefault(x => x.IsCloseTag(token));
+        return tag != null;
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine((int)Type, Content);
-    }
+    public bool Equals(Token other) => 
+        Type == other.Type && Content == other.Content;
+
+    public override bool Equals(object? obj) => 
+        obj is Token other && Equals(other);
+
+    public override int GetHashCode() => 
+        HashCode.Combine((int)Type, Content);
 }
