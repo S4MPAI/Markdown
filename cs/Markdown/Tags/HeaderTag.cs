@@ -1,3 +1,4 @@
+using Markdown.Tags.Enum;
 using Markdown.Tokens;
 
 namespace Markdown.Tags;
@@ -41,7 +42,7 @@ public class HeaderTag : ITag
         return content[0] == HeaderSymbol && (content.Length == 1 || content[1] == EndHeaderTagSymbol);
     }
 
-    public bool IsCorrectContentInTag(IReadOnlyList<Token> tokens, int start, int end)
+    public TagContentProblem IsHaveProblemWithTags(IReadOnlyList<Token> tokens, int start, int end)
     {
         throw new NotImplementedException();
     }

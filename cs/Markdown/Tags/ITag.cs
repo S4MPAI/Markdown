@@ -1,3 +1,4 @@
+using Markdown.Tags.Enum;
 using Markdown.Tokens;
 
 namespace Markdown.Tags;
@@ -11,5 +12,5 @@ public interface ITag
     public bool IsCloseTag(Token token);
     public bool IsTag(string content);
     public bool IsStartOfTag(string content);
-    public bool IsCorrectContentInTag(IReadOnlyList<Token> tokens, int openTagPosition, int closeTagPosition);
+    public TagContentProblem IsHaveProblemWithTags(IReadOnlyList<Token> tokens, int openTagPosition, int closeTagPosition);
 }

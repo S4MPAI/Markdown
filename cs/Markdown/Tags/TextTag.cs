@@ -1,3 +1,4 @@
+using Markdown.Tags.Enum;
 using Markdown.Tokens;
 
 namespace Markdown.Tags;
@@ -29,7 +30,7 @@ public abstract class TextTag : ITag
                previousPos > 0 && tokens[previousPos].Type != TokenType.Space;
     }
 
-    private bool IsCorrectTag(IReadOnlyList<Token> tokens, int tokenPosition)
+    private static bool IsCorrectTag(IReadOnlyList<Token> tokens, int tokenPosition)
     {
         var previousPos = tokenPosition - 1;
         var nextPos = tokenPosition + 1;
@@ -49,24 +50,48 @@ public abstract class TextTag : ITag
 
     public abstract bool IsStartOfTag(string content);
 
-    public bool IsCorrectContentInTag(IReadOnlyList<Token> tokens, int start, int end)
+    public TagContentProblem IsHaveProblemWithTags(IReadOnlyList<Token> tokens, int start, int end)
     {
-        var prevPos = start - 1;
-        var nextPos = end + 1;
+        if (!IsOpenTag(tokens[start]) || !IsCloseTag(tokens[end]))
+            return TagContentProblem.NotTags;
         
-        if (end - start == 1 || !IsOpenTag(tokens[start]) || !IsCloseTag(tokens[end]))
-            return false;
+        if(!TagsHaveContent(tokens, start, end))
+            return TagContentProblem.NoContent;
 
-        return  IsWordPartInTags(tokens, start, end) ||
-                IsPhraseInTags(tokens, prevPos, nextPos);
+        return IsWordPartInTags(tokens, start, end) ? 
+            TagContentProblem.None : 
+            TagMarkValidPhrase(tokens, start, end);
+    }
+
+    private static bool TagsHaveContent(IReadOnlyList<Token> tokens, int start, int end)
+    {
+        var currentPos = start;
+        var isHaveContent = false;
+        while (currentPos < end)
+            if (tokens[++currentPos].Type != TokenType.Tag)
+            {
+                isHaveContent = true;
+                break;
+            }
+                
+        return isHaveContent;
     }
 
     private static bool IsWordPartInTags(IReadOnlyList<Token> tokens, int start, int end) =>
         end - start == 2 && tokens[start + 1].Type == TokenType.Word;
     
-    private static bool IsPhraseInTags(IReadOnlyList<Token> tokens, int prevPos, int nextPos)
+    private static TagContentProblem TagMarkValidPhrase(IReadOnlyList<Token> tokens, int prevPos, int nextPos)
     {
-        return (prevPos < 0 || tokens[prevPos].Type != TokenType.Word) && 
-               (nextPos >= tokens.Count || tokens[nextPos].Type != TokenType.Word);
+        while (prevPos >= 0 && tokens[prevPos].Type == TokenType.Tag)
+            prevPos--;
+        if (prevPos >= 0 && tokens[prevPos].Type == TokenType.Word)
+            return TagContentProblem.OpenTag;
+        
+        while (nextPos < tokens.Count && tokens[nextPos].Type == TokenType.Tag)
+            nextPos++;
+        if (nextPos < tokens.Count && tokens[nextPos].Type == TokenType.Word)
+            return TagContentProblem.CloseTag;
+
+        return TagContentProblem.None;
     }
 }
