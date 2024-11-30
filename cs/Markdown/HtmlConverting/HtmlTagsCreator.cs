@@ -8,8 +8,8 @@ public static class HtmlTagsCreator
     private static Dictionary<TagType, string> Tags { get; } = new()
     {
         { TagType.Italic, "em" },
-        { TagType.Header, "strong" },
-        { TagType.Strong, "h1" }
+        { TagType.Header, "h1" },
+        { TagType.Strong, "strong" }
     };
 
     public static string CreateOpenTag(TagType tagType, List<(string, string)>? parameters = null)
