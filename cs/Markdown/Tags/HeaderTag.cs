@@ -38,12 +38,10 @@ public class HeaderTag : ITag
     {
         if (content.Length is 0 or > 2)
             return false;
-        
+
         return content[0] == HeaderSymbol && (content.Length == 1 || content[1] == EndHeaderTagSymbol);
     }
 
-    public TagContentProblem IsHaveProblemWithTags(IReadOnlyList<Token> tokens, int start, int end)
-    {
-        throw new NotImplementedException();
-    }
+    public TagContentProblem IsHaveProblemWithTags(IReadOnlyList<Token> tokens, int start, int end) => 
+        TagContentProblem.None;
 }
