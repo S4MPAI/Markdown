@@ -21,7 +21,8 @@ public class Md
                 new UnderscoreInNumberHandler(),
                 new StrongTagsHandler(),
                 new TagTokensIntersectsHandler(TagType.Italic, TagType.Strong),
-                new NonPairTagTokensHandler()
+                new NonPairTagTokensHandler(),
+                new NestedTagTokensHandler(TagType.Italic, TagType.Strong)
             }
             .OrderBy(x => x.Priority)
             .ToList();
