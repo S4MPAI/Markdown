@@ -4,6 +4,7 @@ namespace Markdown.Tokens;
 
 public struct Token : IEquatable<Token>
 {
+    public static readonly Token EndOfText = new("", TokenType.NewLine);
     private static readonly List<ITag> Tags =
     [
         new HeaderTag(),
@@ -66,6 +67,10 @@ public struct Token : IEquatable<Token>
         token = new Token(content, TokenType.Tag);
         return true;
     }
+
+    public static bool IsTagToken(Token token, TagType tagType) =>
+        (TryGetTagTypeByOpenTag(token, out var openTag) && openTag == tagType) ||
+        (TryGetTagTypeByCloseTag(token, out var closeTag) && closeTag == tagType);
 
     public static bool IsTagStartPart(string content) =>
         Tags.Any(tag => tag.IsStartOfTag(content));
