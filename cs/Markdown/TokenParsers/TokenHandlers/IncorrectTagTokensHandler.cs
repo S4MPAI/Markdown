@@ -22,7 +22,7 @@ public class IncorrectTagTokensHandler : ITokenHandler
                 (tag!.IsCorrectOpenTag(tokens, i) || tag.IsCorrectCloseTag(tokens, i)))
                 result.Add(token);
             else
-                result.Add(Token.CreateWordToken(token.Content));
+                result.Add(Token.CreateTextToken(token.Content));
         }
         
         return result;

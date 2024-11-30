@@ -11,6 +11,8 @@ public struct Token : IEquatable<Token>
         new StrongTag()
     ];
 
+    private static readonly HashSet<char> SeparatorSymbols = ['\\', ',', '.', ';', '/'];
+    
     public readonly TokenType Type;
     public readonly string Content;
 
@@ -20,9 +22,20 @@ public struct Token : IEquatable<Token>
         Type = tokenType;
     }
 
-    public static Token CreateWordToken(string content) => 
+    public static Token CreateTextToken(string content) =>
         new(content, TokenType.Word);
 
+    public static bool TryCreateSeparatorToken(string content, out Token token)
+    {
+        token = default;
+        if (!content.All(SeparatorSymbols.Contains)) 
+            return false;
+        
+        token = new Token(content, TokenType.Separator);
+        return true;
+    }
+        
+    
     public static bool TryCreateCommonToken(string content, out Token token)
     {
         if (int.TryParse(content, out _))

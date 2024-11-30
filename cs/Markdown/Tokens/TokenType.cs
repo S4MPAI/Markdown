@@ -7,5 +7,6 @@ public enum TokenType
     Word,
     NewLine,
     Tag,
-    Escape
+    Escape,
+    Separator
 }

@@ -70,6 +70,6 @@ public class UnderscoreInNumberHandler : ITokenHandler
         var tokensContent = tokens.Dequeue(length).Select(token => token.Content);
         stringBuilder.Append(tokensContent);
         
-        return Token.CreateWordToken(stringBuilder.ToString());
+        return Token.CreateTextToken(stringBuilder.ToString());
     }
 }
