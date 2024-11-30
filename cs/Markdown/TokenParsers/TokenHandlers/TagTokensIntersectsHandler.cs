@@ -11,9 +11,9 @@ public class TagTokensIntersectsHandler(TagType firstTagType, TagType secondTagT
     public IReadOnlyList<Token> Handle(IReadOnlyList<Token> tokens)
     {
         var handledTokens = tokens.ToList();
-        var tagTypesTokens = tokens.GetNeededTagTypesTokens(firstTagType, secondTagType).ToList();
-        var firstTagTypePairs = tagTypesTokens.GetTagsPairsOfNeededTag(firstTagType).ToList();
-        var secondTagTypePairs = tagTypesTokens.GetTagsPairsOfNeededTag(secondTagType).ToList();
+        var tagTypesTokens = tokens.GetTagTypesTokens(firstTagType, secondTagType).ToList();
+        var firstTagTypePairs = tagTypesTokens.GetTagsPairsOfTag(firstTagType).ToList();
+        var secondTagTypePairs = tagTypesTokens.GetTagsPairsOfTag(secondTagType).ToList();
         
         DisableIntersectsTags(handledTokens, firstTagTypePairs, secondTagTypePairs);
         DisableIntersectsTags(handledTokens, secondTagTypePairs, firstTagTypePairs);

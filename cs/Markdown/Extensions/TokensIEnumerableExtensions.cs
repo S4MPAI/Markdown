@@ -4,14 +4,14 @@ namespace Markdown.Extensions;
 
 public static class TokensIEnumerableExtensions
 {
-    public static IEnumerable<(int position, Token token)> GetNeededTagTypesTokens(
+    public static IEnumerable<(int position, Token token)> GetTagTypesTokens(
         this IEnumerable<Token> tokens,
-        params TagType[] neededTagTypes) => 
+        params TagType[] tagTypes) => 
         tokens
             .Select((t, i) => (position: i, token: t))
-            .Where(tokenInfo => neededTagTypes.Any(type => Token.IsTagToken(tokenInfo.token, type)));
+            .Where(tokenInfo => tagTypes.Any(type => Token.IsTagToken(tokenInfo.token, type)));
 
-    public static IEnumerable<(int left, int right)> GetTagsPairsOfNeededTag(
+    public static IEnumerable<(int left, int right)> GetTagsPairsOfTag(
         this IEnumerable<(int position, Token token)> tagTokens,
         TagType tagType)
     {
