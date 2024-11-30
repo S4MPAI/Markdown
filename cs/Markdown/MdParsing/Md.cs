@@ -20,7 +20,7 @@ public class Md
                 new IncorrectTagTokensHandler(),
                 new UnderscoreInNumberHandler(),
                 new StrongTagsHandler(),
-                //new TagTokensIntersectsHandler(),
+                new TagTokensIntersectsHandler(TagType.Italic, TagType.Strong),
                 new NonPairTagTokensHandler()
             }
             .OrderBy(x => x.Priority)
