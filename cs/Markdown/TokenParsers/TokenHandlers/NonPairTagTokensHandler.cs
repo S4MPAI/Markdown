@@ -36,6 +36,7 @@ public class NonPairTagTokensHandler : ITokenHandler
                 }
                 
                 var lastTagContentProblem = tag.IsHaveProblemWithTags(tokens, openTag, i);
+                // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
                 switch (lastTagContentProblem)
                 {
                     case TagContentProblem.NoContent:

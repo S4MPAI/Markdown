@@ -30,4 +30,28 @@ public static class TokensIEnumerableExtensions
             }
         }
     }
+
+    public static void DisableTagTokensPairsBy(
+        this IList<Token> tokens,
+        IReadOnlyList<(int left, int right)> checkPairs,
+        IReadOnlyList<(int left, int right)> disablePairs,
+        Func<(int left, int right), (int left, int right), bool> predicate)
+    {
+        var pairIndex = 0;
+        foreach (var firstPair in checkPairs)
+        {
+            while (pairIndex < disablePairs.Count && predicate(firstPair, disablePairs[pairIndex]))
+            {
+                DisableTagTokenPair(tokens, disablePairs[pairIndex]);
+                pairIndex++;
+            }
+        }
+    }
+    
+    private static void DisableTagTokenPair(IList<Token> handledTokens, (int left, int right) tagTokenPair)
+    {
+        var (left, right) = tagTokenPair;
+        handledTokens[left] = Token.CreateTextToken(handledTokens[left].Content);
+        handledTokens[right] = Token.CreateTextToken(handledTokens[right].Content);
+    }
 }
