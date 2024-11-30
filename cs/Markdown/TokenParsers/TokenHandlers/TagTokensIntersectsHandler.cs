@@ -1,3 +1,4 @@
+using Markdown.Helpers;
 using Markdown.Tokens;
 
 namespace Markdown.TokenParsers.TokenHandlers;
@@ -56,7 +57,8 @@ public class TagTokensIntersectsHandler(TagType firstTagType, TagType secondTagT
         var pairIndex = 0;
         foreach (var firstTagTypePair in firstTagTypePairs)
         {
-            while (pairIndex < secondTagTypePairs.Count && IsIntersects(firstTagTypePair, secondTagTypePairs[pairIndex]))
+            while (pairIndex < secondTagTypePairs.Count && 
+                   IntervalHelper.IsIntersects(firstTagTypePair, secondTagTypePairs[pairIndex]))
             {
                 DisableTagTokenPair(handledTokens, secondTagTypePairs[pairIndex]);
                 pairIndex++;
@@ -72,16 +74,5 @@ public class TagTokensIntersectsHandler(TagType firstTagType, TagType secondTagT
         var (left, right) = tagTokenPair;
         handledTokens[left] = Token.CreateTextToken(handledTokens[left].Content);
         handledTokens[right] = Token.CreateTextToken(handledTokens[right].Content);
-    }
-
-    private static bool IsIntersects((int left, int right) firstTagTypePairs, (int left, int right) secondTagTypePairs)
-    {
-        if (firstTagTypePairs.left > secondTagTypePairs.left)
-            // ReSharper disable once TailRecursiveCall
-            return IsIntersects(secondTagTypePairs, firstTagTypePairs);
-        
-        return firstTagTypePairs.right > secondTagTypePairs.left && 
-               firstTagTypePairs.right < secondTagTypePairs.right &&
-               secondTagTypePairs.left > firstTagTypePairs.left;
     }
 }
