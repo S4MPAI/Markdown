@@ -15,7 +15,7 @@ public class TokensToHtmlConverter : ITokensConverter
         {
             new HeaderTagConverter(),
             new ItalicTagConverter(),
-            new StrongTagConverter()
+            new StrongTagConverter(),
         }.ToDictionary<BaseHtmlTagConverter, TagType, IHtmlTagConverter>(
             key => key.HandledTag, 
             value => value);
@@ -29,8 +29,11 @@ public class TokensToHtmlConverter : ITokensConverter
         {
             var token = tokens[i];
 
-            if (!Token.TryGetTagTypeByOpenTag(token, out var tagType)) 
+            if (!Token.TryGetTagTypeByOpenTag(token, out var tagType))
+            {
+                result.Append(token.Content);
                 continue;
+            }
             
             var converter = tagConverters[tagType];
             var nextPosition = i + 1;
