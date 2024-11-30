@@ -1,5 +1,4 @@
 using Markdown.Extensions;
-using Markdown.MdParsing.Interfaces;
 using Markdown.Tokens;
 
 namespace Markdown.TokenParsers.TokenReaders;
@@ -12,13 +11,22 @@ public class CommonTokensReader : ITokenReader
         {
             var currentChar = text.GetSymbol(i);
 
-            if (Token.TryCreateCommonToken(currentChar, out var token))
-                yield return token;
+            if (Token.TryCreateCommonToken(currentChar, out var commonToken))
+                yield return commonToken;
+            else if (Token.TryCreateSeparatorToken(currentChar, out var punctuationToken))
+                yield return punctuationToken;
             else
             {
                 var tokenType = Token.IsTagStartPart(currentChar) ? TokenType.Tag : TokenType.Word;
                 yield return CreateTokenAndMovePointer(text, tokenType, ref i);
             }
+        }
+
+        if (!Token.TryCreateCommonToken(text.GetSymbol(text.Length - 1), out var lastToken) ||
+            lastToken.Type != TokenType.NewLine)
+        {
+            Token.TryCreateCommonToken("\n", out var lastNewLineToken);
+            yield return lastNewLineToken;
         }
     }
     
@@ -37,7 +45,7 @@ public class CommonTokensReader : ITokenReader
         if (tokenType == TokenType.Tag && Token.TryCreateTagToken(content, out var token))
             return token;
 
-        return Token.CreateWordToken(content);
+        return Token.CreateTextToken(content);
     }
 
     private static bool IsTokenEnded(string nextChar, string content, TokenType tokenType)
