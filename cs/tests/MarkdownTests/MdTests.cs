@@ -35,7 +35,7 @@ public class MdTests
             .Returns("Внутри <strong>двойного выделения <em>одинарное</em> тоже</strong> работает.")
             .SetName("ContainsItalicInStrong"),
         new TestCaseData("внутри _одинарного __двойное__ не_ работает.")
-            .Returns("внутри _одинарного __двойное__ не_ работает.")
+            .Returns("внутри <em>одинарного __двойное__ не</em> работает.")
             .SetName("ContainsStrongInItalic"),
         new TestCaseData("Подчерки внутри текста c цифрами_12_3 не считаются выделением")
             .Returns("Подчерки внутри текста c цифрами_12_3 не считаются выделением")
