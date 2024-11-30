@@ -43,13 +43,13 @@ public class NonPairTagTokensHandler : ITokenHandler
                         handledTokens[i] = Token.CreateTextToken(token.Content);
                         continue;
                     case TagContentProblem.None:
-                        openTags[tag.TagType].Dequeue();
+                        openTags[tag.TagType].Pop();
                         continue;
                 }
             }
             
             if (Token.TryGetTagByOpenTag(token, out var newOpenTag) && newOpenTag!.IsCorrectOpenTag(tokens, i))
-                openTags[newOpenTag.TagType].Enqueue(i);
+                openTags[newOpenTag.TagType].Push(i);
             else
                 ChangeTagTokenToWordToken(handledTokens, i);
         }
@@ -58,12 +58,12 @@ public class NonPairTagTokensHandler : ITokenHandler
         return handledTokens;
     }
     
-    private static Dictionary<TagType,Queue<int>> CreateStartOpenTagsDictionary()
+    private static Dictionary<TagType,Stack<int>> CreateStartOpenTagsDictionary()
     {
-        var openTags = new Dictionary<TagType, Queue<int>>();
+        var openTags = new Dictionary<TagType, Stack<int>>();
         
         foreach (var tagType in TagTypes)
-            openTags[tagType] = new Queue<int>();
+            openTags[tagType] = new Stack<int>();
         
         return openTags;
     }
@@ -82,7 +82,7 @@ public class NonPairTagTokensHandler : ITokenHandler
     
     private void ClearOpenTagsIfTokenNotValid(Token token,
         Token[] handledTokens,
-        Dictionary<TagType, Queue<int>> openTags)
+        Dictionary<TagType, Stack<int>> openTags)
     {
         foreach (var tagNotValidTokens in notValidTokenTypesInTagContent)
         {
@@ -94,17 +94,17 @@ public class NonPairTagTokensHandler : ITokenHandler
     }
 
     private static void ChangeNotClosedTagsInWordToken(Token[] handledTokens,
-        Dictionary<TagType, Queue<int>> openTags)
+        Dictionary<TagType, Stack<int>> openTags)
     {
         foreach (var tagPositions in openTags.SelectMany(x => x.Value))
             ChangeTagTokenToWordToken(handledTokens, tagPositions);
     }
     
     private static void ChangeLastOpenTagTokenToWordToken(Token[] handledTokens,
-        Dictionary<TagType, Queue<int>> openTags,
+        Dictionary<TagType, Stack<int>> openTags,
         TagType tagType)
     {
-        var tag = openTags[tagType].Dequeue();
+        var tag = openTags[tagType].Pop();
         ChangeTagTokenToWordToken(handledTokens, tag);
     }
 
