@@ -15,10 +15,13 @@ public class EscapeTokenApplyHandler : ITokenHandler
         {
             if (previousToken?.Type == TokenType.Escape)
             {
-                if (token.Type is not (TokenType.Tag or TokenType.Escape))
-                    handledTokens.Add(Token.CreateWordToken(previousToken.Value.Content));
+                if (token.Type is not (TokenType.Tag or TokenType.Escape) && 
+                    Token.TryCreateSeparatorToken(previousToken.Value.Content, out var punctuationToken))
+                    handledTokens.Add(punctuationToken);
 
-                handledTokens.Add(Token.CreateWordToken(token.Content));
+                handledTokens.Add(Token.TryCreateSeparatorToken(token.Content, out var newCurrentToken)
+                    ? newCurrentToken
+                    : Token.CreateTextToken(token.Content));
                 previousToken = null;
             }
             else if (token.Type == TokenType.Escape)
@@ -31,6 +34,9 @@ public class EscapeTokenApplyHandler : ITokenHandler
                 previousToken = token;
             }
         }
+        
+        if (previousToken?.Type == TokenType.Escape)
+            handledTokens.Add(previousToken.Value);
         
         return handledTokens;
     }
