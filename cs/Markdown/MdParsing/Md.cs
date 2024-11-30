@@ -18,6 +18,10 @@ public class Md
             { 
                 new EscapeTokenApplyHandler(), 
                 new IncorrectTagTokensHandler(),
+                new UnderscoreInNumberHandler(),
+                new StrongTagsHandler(),
+                //new TagTokensIntersectsHandler(),
+                new NonPairTagTokensHandler()
             }
             .OrderBy(x => x.Priority)
             .ToList();
