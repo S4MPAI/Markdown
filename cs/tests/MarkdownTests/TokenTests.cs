@@ -12,7 +12,7 @@ public class TokenTests
     [TestCase("firstWord secondWord")]
     public void CreateWordToken_ShouldReturnWordToken(string word)
     {
-        var actualResult = Token.CreateWordToken(word);
+        var actualResult = Token.CreateTextToken(word);
 
         AssertToken(actualResult, word, TokenType.Word);
     }
@@ -21,18 +21,19 @@ public class TokenTests
     [TestCase("\n", TokenType.NewLine)]
     [TestCase("\r", TokenType.NewLine)]
     [TestCase("\\", TokenType.Escape)]
-    [TestCase("_", TokenType.Tag)]
-    [TestCase("#", TokenType.Tag)]
     public void TryCreateCommonToken_ShouldReturnExpectedToken(string content, TokenType expectedType)
     {
         Token.TryCreateCommonToken(content, out var actualToken).Should().BeTrue();
         AssertToken(actualToken, content, expectedType);
     }
 
-    [TestCase("_", TagType.Italic)]
-    public void TryCreateTagToken_ShouldReturnExpectedToken(string content, TagType expectedTag)
+    [TestCase("_")]
+    [TestCase("# ")]
+    [TestCase("__")]
+    public void TryCreateTagToken_ShouldReturnExpectedToken(string content)
     {
-        
+        Token.TryCreateTagToken(content, out var actualToken).Should().BeTrue();
+        AssertToken(actualToken, content, TokenType.Tag);
     }
     
     private static void AssertToken(
