@@ -21,13 +21,8 @@ public class CommonTokensReader : ITokenReader
                 yield return CreateTokenAndMovePointer(text, tokenType, ref i);
             }
         }
-
-        if (!Token.TryCreateCommonToken(text.GetSymbol(text.Length - 1), out var lastToken) ||
-            lastToken.Type != TokenType.NewLine)
-        {
-            Token.TryCreateCommonToken("\n", out var lastNewLineToken);
-            yield return lastNewLineToken;
-        }
+        
+        yield return Token.EndOfText;
     }
     
     private static Token CreateTokenAndMovePointer(string text, TokenType tokenType, ref int i)
