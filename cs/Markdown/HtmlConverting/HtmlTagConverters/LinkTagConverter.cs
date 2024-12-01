@@ -18,7 +18,7 @@ public class LinkTagConverter() : BaseHtmlTagConverter(TagType.LinkText)
         {
             if (TokenUtilities.TryGetTagTypeByOpenTag(tokens[currentPosition], out var tagType))
             {
-                var convertedString = ConvertTokensToHtmlTextInTag(converters, tokens, tagType, ref currentPosition);
+                var convertedString = ConvertTokensToHtmlTextInTag(converters, tokens, tagType!.Value, ref currentPosition);
                 linkTextBuilder.Append(convertedString);
             }
             else

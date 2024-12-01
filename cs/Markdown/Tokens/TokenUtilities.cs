@@ -68,9 +68,9 @@ public class TokenUtilities
     public static bool IsTagStartPart(string content) =>
         Tags.Any(tag => tag.IsStartOfTag(content));
 
-    public static bool TryGetTagTypeByOpenTag(Token token, out TagType tagType)
+    public static bool TryGetTagTypeByOpenTag(Token token, out TagType? tagType)
     {
-        tagType = default;
+        tagType = null;
         if (!TryGetTagByOpenTag(token, out var tag)) 
             return false;
         
@@ -84,11 +84,12 @@ public class TokenUtilities
         return tag != null;
     }
 
-    public static bool TryGetTagTypeByCloseTag(Token token, out TagType tagType)
+    public static bool TryGetTagTypeByCloseTag(Token token, out TagType? tagType)
     {
-        tagType = default;
+        tagType = null;
         if (!TryGetTagByCloseTag(token, out var tag))
             return false;
+        
         tagType = tag!.TagType;
         return true;
     }

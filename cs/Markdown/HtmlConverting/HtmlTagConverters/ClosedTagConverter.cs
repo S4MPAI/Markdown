@@ -28,7 +28,7 @@ public class ClosedTagConverter(TagType tagType) : BaseHtmlTagConverter(tagType)
                     return stringBuilder.ToString();
                 }
 
-                var convertedString = ConvertTokensToHtmlTextInTag(converters, tokens, tagType, ref i);
+                var convertedString = ConvertTokensToHtmlTextInTag(converters, tokens, tagType!.Value, ref i);
                 stringBuilder.Append(convertedString);
             }
             else 

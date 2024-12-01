@@ -36,7 +36,7 @@ public class TokensToHtmlConverter : ITokensConverter
                 continue;
             }
             
-            var converter = tagConverters[tagType];
+            var converter = tagConverters[tagType!.Value];
             var nextPosition = i + 1;
             var htmlText = converter.ConvertTokensToHtmlText(tagConverters,
                 tokens,
