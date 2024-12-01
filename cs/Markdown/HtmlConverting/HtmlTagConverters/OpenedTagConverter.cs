@@ -21,6 +21,7 @@ public class OpenedTagConverter(TagType tagType, TokenType endTokenType) : BaseH
             if (token.Type == endTokenType)
             {
                 stringBuilder.Append(HtmlTagsCreator.CreateCloseTag(HandledTag));
+                stringBuilder.Append(token.Content);
                 readTokens = i - start + 1;
                 return stringBuilder.ToString();
             }
