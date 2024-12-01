@@ -4,5 +4,7 @@ public enum TagType
 {
     Italic,
     Strong,
-    Header
+    Header,
+    LinkText,
+    LinkValue
 }
