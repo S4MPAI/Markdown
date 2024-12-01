@@ -67,5 +67,14 @@ public class MdTests
         new TestCaseData("_Теги в разных абзацах\nне должны считаться_ выделением")
             .Returns("_Теги в разных абзацах\nне должны считаться_ выделением")
             .SetName("TagsInDifferentParagraphs"),
+        new TestCaseData("Ссылка [Github](https://github.com/)")
+            .Returns("Ссылка <a href=\"https://github.com/\">Github</a>")
+            .SetName("LinkInText"),
+        new TestCaseData("Ссылка c тегами в тексте [_Github_](https://github.com/)")
+            .Returns("Ссылка c тегами в тексте <a href=\"https://github.com/\"><em>Github</em></a>")
+            .SetName("LinkTextWithTagsInContent"),
+        new TestCaseData("Теги внутри тега ссылки не работают _[Github](https://github.com_/)")
+            .Returns("Теги внутри тега ссылки не работают _<a href=\"https://github.com_/\">Github</a>")
+            .SetName("LinkValueWithTagsInContent"),
     };
 }
