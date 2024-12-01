@@ -18,8 +18,8 @@ public class IncorrectTagTokensHandler : ITokenHandler
                 continue;
             }
             
-            if (Token.TryGetTagByOpenTag(token, out var tag) && 
-                (tag!.IsCorrectOpenTag(tokens, i) || tag.IsCorrectCloseTag(tokens, i)))
+            if (Token.TryGetTagByOpenTag(token, out var openTag) && openTag!.IsCorrectOpenTag(tokens, i) || 
+                Token.TryGetTagByCloseTag(token, out var closeTag) && closeTag!.IsCorrectCloseTag(tokens, i))
                 result.Add(token);
             else
                 result.Add(Token.CreateTextToken(token.Content));
