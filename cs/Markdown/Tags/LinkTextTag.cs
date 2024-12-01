@@ -41,7 +41,7 @@ public class LinkTextTag : ITag
         if (!IsOpenTag(tokens[openTagPosition]) || !IsCloseTag(tokens[closeTagPosition]))
             return TagContentProblem.NotTags;
         
-        var nextPos = openTagPosition + 1;
+        var nextPos = closeTagPosition + 1;
         if (closeTagPosition > tokens.Count - 1 - MinSymbolsCountAfterTag || !IsOpenTagOfLinkValue(tokens[nextPos]))
             return TagContentProblem.CloseTag;
         
