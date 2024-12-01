@@ -25,7 +25,7 @@ public class OpenedTagConverter(TagType tagType, TokenType endTokenType) : BaseH
                 return stringBuilder.ToString();
             }
             
-            if (Token.TryGetTagTypeByOpenTag(token, out var tagType))
+            if (TokenUtilities.TryGetTagTypeByOpenTag(token, out var tagType))
             {
                 var convertedString = ConvertTokensToHtmlTextInTag(converters, tokens, tagType, ref i);
                 stringBuilder.Append(convertedString);

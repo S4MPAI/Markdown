@@ -11,18 +11,18 @@ public class CommonTokensReader : ITokenReader
         {
             var currentChar = text.GetSymbol(i);
 
-            if (Token.TryCreateCommonToken(currentChar, out var commonToken))
-                yield return commonToken;
-            else if (Token.TryCreateSeparatorToken(currentChar, out var punctuationToken))
-                yield return punctuationToken;
+            if (TokenUtilities.TryCreateCommonToken(currentChar, out var commonToken))
+                yield return commonToken!.Value;
+            else if (TokenUtilities.TryCreateSeparatorToken(currentChar, out var punctuationToken))
+                yield return punctuationToken!.Value;
             else
             {
-                var tokenType = Token.IsTagStartPart(currentChar) ? TokenType.Tag : TokenType.Word;
+                var tokenType = TokenUtilities.IsTagStartPart(currentChar) ? TokenType.Tag : TokenType.Word;
                 yield return CreateTokenAndMovePointer(text, tokenType, ref i);
             }
         }
         
-        yield return Token.EndOfText;
+        yield return TokenUtilities.EndOfText;
     }
     
     private static Token CreateTokenAndMovePointer(string text, TokenType tokenType, ref int i)
@@ -37,17 +37,17 @@ public class CommonTokensReader : ITokenReader
 
         i--;
 
-        if (tokenType == TokenType.Tag && Token.TryCreateTagToken(content, out var token))
-            return token;
+        if (tokenType == TokenType.Tag && TokenUtilities.TryCreateTagToken(content, out var token))
+            return token!.Value;
 
-        return Token.CreateTextToken(content);
+        return TokenUtilities.CreateTextToken(content);
     }
 
     private static bool IsTokenEnded(string nextChar, string content, TokenType tokenType)
     {
         if (tokenType == TokenType.Word &&
-            (Token.TryCreateCommonToken(nextChar, out _) || Token.IsTagStartPart(nextChar)))
+            (TokenUtilities.TryCreateCommonToken(nextChar, out _) || TokenUtilities.IsTagStartPart(nextChar)))
             return true;
-        return Token.TryCreateTagToken(content, out _);
+        return TokenUtilities.TryCreateTagToken(content, out _);
     }
 }

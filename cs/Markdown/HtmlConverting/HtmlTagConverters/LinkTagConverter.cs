@@ -16,7 +16,7 @@ public class LinkTagConverter() : BaseHtmlTagConverter(TagType.LinkText)
 
         while (!IsCloseTagOfNeededTagType(tokens, currentPosition, TagType.LinkText))
         {
-            if (Token.TryGetTagTypeByOpenTag(tokens[currentPosition], out var tagType))
+            if (TokenUtilities.TryGetTagTypeByOpenTag(tokens[currentPosition], out var tagType))
             {
                 var convertedString = ConvertTokensToHtmlTextInTag(converters, tokens, tagType, ref currentPosition);
                 linkTextBuilder.Append(convertedString);
@@ -29,7 +29,7 @@ public class LinkTagConverter() : BaseHtmlTagConverter(TagType.LinkText)
         readTokens = ++currentPosition - start;
         if (currentPosition >= tokens.Count ||
             tokens[currentPosition].Type != TokenType.Tag ||
-            !Token.TryGetTagTypeByOpenTag(tokens[currentPosition], out var nextTagType) ||
+            !TokenUtilities.TryGetTagTypeByOpenTag(tokens[currentPosition], out var nextTagType) ||
             nextTagType != TagType.LinkValue)
         {
             return linkTextBuilder.ToString();
@@ -50,7 +50,7 @@ public class LinkTagConverter() : BaseHtmlTagConverter(TagType.LinkText)
     {
         var token = tokens[position];
         return token.Type == TokenType.Tag &&
-               Token.TryGetTagTypeByCloseTag(token, out var tagType) &&
+               TokenUtilities.TryGetTagTypeByCloseTag(token, out var tagType) &&
                tagType == neededTagType;
     }
 }

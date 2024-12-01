@@ -16,12 +16,12 @@ public class EscapeTokenApplyHandler : ITokenHandler
             if (previousToken?.Type == TokenType.Escape)
             {
                 if (token.Type is not (TokenType.Tag or TokenType.Escape) && 
-                    Token.TryCreateSeparatorToken(previousToken.Value.Content, out var punctuationToken))
-                    handledTokens.Add(punctuationToken);
+                    TokenUtilities.TryCreateSeparatorToken(previousToken.Value.Content, out var punctuationToken))
+                    handledTokens.Add(punctuationToken!.Value);
 
-                handledTokens.Add(Token.TryCreateSeparatorToken(token.Content, out var newCurrentToken)
-                    ? newCurrentToken
-                    : Token.CreateTextToken(token.Content));
+                handledTokens.Add(TokenUtilities.TryCreateSeparatorToken(token.Content, out var newCurrentToken)
+                    ? newCurrentToken!.Value
+                    : TokenUtilities.CreateTextToken(token.Content));
                 previousToken = null;
             }
             else if (token.Type == TokenType.Escape)

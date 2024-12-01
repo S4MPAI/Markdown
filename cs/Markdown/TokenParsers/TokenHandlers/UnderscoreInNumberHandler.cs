@@ -58,7 +58,7 @@ public class UnderscoreInNumberHandler : ITokenHandler
 
     private static bool IsNotStrongOrItalicTag(Token token) =>
         token.Type != TokenType.Tag || 
-        !Token.TryGetTagTypeByOpenTag(token, out var tagType) || 
+        !TokenUtilities.TryGetTagTypeByOpenTag(token, out var tagType) || 
         tagType is not TagType.Italic and not TagType.Strong;
     
     private static Token CombineTokensInOne(Queue<Token> tokens, int length)
@@ -68,6 +68,6 @@ public class UnderscoreInNumberHandler : ITokenHandler
         var tokensContent = tokens.Dequeue(length).Select(token => token.Content);
         stringBuilder.Append(tokensContent);
         
-        return Token.CreateTextToken(stringBuilder.ToString());
+        return TokenUtilities.CreateTextToken(stringBuilder.ToString());
     }
 }

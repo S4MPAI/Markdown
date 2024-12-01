@@ -30,7 +30,7 @@ public class TokensToHtmlConverter : ITokensConverter
         {
             var token = tokens[i];
 
-            if (!Token.TryGetTagTypeByOpenTag(token, out var tagType))
+            if (!TokenUtilities.TryGetTagTypeByOpenTag(token, out var tagType))
             {
                 result.Append(token.Content);
                 continue;

@@ -19,7 +19,7 @@ public class ClosedTagConverter(TagType tagType) : BaseHtmlTagConverter(tagType)
         {
             var token = tokens[i];
 
-            if (Token.TryGetTagTypeByOpenTag(token, out var tagType))
+            if (TokenUtilities.TryGetTagTypeByOpenTag(token, out var tagType))
             {
                 if (tagType == HandledTag)
                 {

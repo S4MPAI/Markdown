@@ -48,5 +48,5 @@ public class LinkValueTag : ITag
     }
 
     private static bool IsCloseTagOfLinkText(Token token) =>
-        Token.TryGetTagTypeByCloseTag(token, out var tagType) && tagType == TagType.LinkText;
+        TokenUtilities.TryGetTagTypeByCloseTag(token, out var tagType) && tagType == TagType.LinkText;
 }

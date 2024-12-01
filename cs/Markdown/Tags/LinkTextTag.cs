@@ -49,5 +49,5 @@ public class LinkTextTag : ITag
     }
 
     private static bool IsOpenTagOfLinkValue(Token token) =>
-        Token.TryGetTagTypeByOpenTag(token, out var tagType) && tagType == TagType.LinkValue;
+        TokenUtilities.TryGetTagTypeByOpenTag(token, out var tagType) && tagType == TagType.LinkValue;
 }

@@ -17,9 +17,9 @@ public class StrongTagsHandler : ITokenHandler
             var nextToken = nextPos < tokens.Count ? tokens[nextPos] : default;
             
             if ((IsStrongOpenTag(token, nextToken) || IsStrongCloseTag(token, nextToken)) && 
-                Token.TryCreateTagToken(token.Content + nextToken.Content, out var newStrongTagToken))
+                TokenUtilities.TryCreateTagToken(token.Content + nextToken.Content, out var newStrongTagToken))
             {
-                handledTokens.Add(newStrongTagToken);
+                handledTokens.Add(newStrongTagToken!.Value);
                 i = nextPos;
             }
             else
@@ -32,14 +32,14 @@ public class StrongTagsHandler : ITokenHandler
     }
     
     private static bool IsStrongCloseTag(Token token, Token nextToken) => 
-        Token.TryGetTagTypeByCloseTag(token, out var currentTagType) && 
-        Token.TryGetTagTypeByCloseTag(nextToken, out var nextTagType) &&
+        TokenUtilities.TryGetTagTypeByCloseTag(token, out var currentTagType) && 
+        TokenUtilities.TryGetTagTypeByCloseTag(nextToken, out var nextTagType) &&
         currentTagType == nextTagType &&
         currentTagType == TagType.Italic;
 
     private static bool IsStrongOpenTag(Token token, Token nextToken) =>
-        Token.TryGetTagTypeByOpenTag(token, out var currentTagType) && 
-        Token.TryGetTagTypeByOpenTag(nextToken, out var nextTagType) && 
+        TokenUtilities.TryGetTagTypeByOpenTag(token, out var currentTagType) && 
+        TokenUtilities.TryGetTagTypeByOpenTag(nextToken, out var nextTagType) && 
         currentTagType == nextTagType && 
         currentTagType == TagType.Italic;
 }

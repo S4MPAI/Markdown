@@ -18,11 +18,11 @@ public class IncorrectTagTokensHandler : ITokenHandler
                 continue;
             }
             
-            if (Token.TryGetTagByOpenTag(token, out var openTag) && openTag!.IsCorrectOpenTag(tokens, i) || 
-                Token.TryGetTagByCloseTag(token, out var closeTag) && closeTag!.IsCorrectCloseTag(tokens, i))
+            if (TokenUtilities.TryGetTagByOpenTag(token, out var openTag) && openTag!.IsCorrectOpenTag(tokens, i) || 
+                TokenUtilities.TryGetTagByCloseTag(token, out var closeTag) && closeTag!.IsCorrectCloseTag(tokens, i))
                 result.Add(token);
             else
-                result.Add(Token.CreateTextToken(token.Content));
+                result.Add(TokenUtilities.CreateTextToken(token.Content));
         }
         
         return result;

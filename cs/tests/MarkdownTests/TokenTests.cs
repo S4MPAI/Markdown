@@ -12,7 +12,7 @@ public class TokenTests
     [TestCase("firstWord secondWord")]
     public void CreateTextToken_ShouldReturnWordToken(string word)
     {
-        var actualResult = Token.CreateTextToken(word);
+        var actualResult = TokenUtilities.CreateTextToken(word);
 
         AssertToken(actualResult, word, TokenType.Word);
     }
@@ -23,8 +23,8 @@ public class TokenTests
     [TestCase("\\", TokenType.Escape)]
     public void TryCreateCommonToken_ShouldReturnExpectedToken(string content, TokenType expectedType)
     {
-        Token.TryCreateCommonToken(content, out var actualToken).Should().BeTrue();
-        AssertToken(actualToken, content, expectedType);
+        TokenUtilities.TryCreateCommonToken(content, out var actualToken).Should().BeTrue();
+        AssertToken(actualToken!.Value, content, expectedType);
     }
 
     [TestCase("_")]
@@ -32,8 +32,8 @@ public class TokenTests
     [TestCase("__")]
     public void TryCreateTagToken_ShouldReturnExpectedToken(string content)
     {
-        Token.TryCreateTagToken(content, out var actualToken).Should().BeTrue();
-        AssertToken(actualToken, content, TokenType.Tag);
+        TokenUtilities.TryCreateTagToken(content, out var actualToken).Should().BeTrue();
+        AssertToken(actualToken!.Value, content, TokenType.Tag);
     }
 
     [TestCase("\\")]
@@ -43,8 +43,8 @@ public class TokenTests
     [TestCase("/")]
     public void TryCreateSeparatorToken_ShouldReturnSeparatorToken(string content)
     {
-        Token.TryCreateSeparatorToken(content, out var actualToken).Should().BeTrue();
-        AssertToken(actualToken, content, TokenType.Separator);
+        TokenUtilities.TryCreateSeparatorToken(content, out var actualToken).Should().BeTrue();
+        AssertToken(actualToken!.Value, content, TokenType.Separator);
     }
     
     private static void AssertToken(

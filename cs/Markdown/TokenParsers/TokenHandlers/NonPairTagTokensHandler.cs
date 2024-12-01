@@ -24,7 +24,7 @@ public class NonPairTagTokensHandler : ITokenHandler
             
             ClearOpenTagsIfTokenNotValid(token, handledTokens, openTags);
             
-            if (Token.TryGetTagByCloseTag(token, out var tag) && 
+            if (TokenUtilities.TryGetTagByCloseTag(token, out var tag) && 
                 tag!.IsCorrectCloseTag(tokens, i) && 
                 openTags[tag.TagType].Count != 0)
             {
@@ -41,7 +41,7 @@ public class NonPairTagTokensHandler : ITokenHandler
                 {
                     case TagContentProblem.NoContent:
                         ChangeLastOpenTagTokenToWordToken(handledTokens, openTags, tag.TagType);
-                        handledTokens[i] = Token.CreateTextToken(token.Content);
+                        handledTokens[i] = TokenUtilities.CreateTextToken(token.Content);
                         continue;
                     case TagContentProblem.None:
                         openTags[tag.TagType].Pop();
@@ -49,7 +49,7 @@ public class NonPairTagTokensHandler : ITokenHandler
                 }
             }
             
-            if (Token.TryGetTagByOpenTag(token, out var newOpenTag) && newOpenTag!.IsCorrectOpenTag(tokens, i))
+            if (TokenUtilities.TryGetTagByOpenTag(token, out var newOpenTag) && newOpenTag!.IsCorrectOpenTag(tokens, i))
                 openTags[newOpenTag.TagType].Push(i);
             else
                 ChangeTagTokenToWordToken(handledTokens, i);
@@ -120,6 +120,6 @@ public class NonPairTagTokensHandler : ITokenHandler
         var token = handledTokens[position];
         
         if (token.Type == TokenType.Tag)
-            handledTokens[position] = Token.CreateTextToken(token.Content);
+            handledTokens[position] = TokenUtilities.CreateTextToken(token.Content);
     }
 }

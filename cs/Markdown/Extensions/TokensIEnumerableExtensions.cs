@@ -10,7 +10,7 @@ public static class TokensIEnumerableExtensions
         params TagType[] tagTypes) => 
         tokens
             .Select((t, i) => (position: i, token: t))
-            .Where(tokenInfo => tagTypes.Any(type => Token.IsTagToken(tokenInfo.token, type)));
+            .Where(tokenInfo => tagTypes.Any(type => TokenUtilities.IsTagToken(tokenInfo.token, type)));
     
     public static IEnumerable<(int position, Token token)> GetAllTagTypesTokens(this IEnumerable<Token> tokens) => 
         tokens.GetTagTypesTokens(Enum.GetValues<TagType>());
@@ -23,12 +23,14 @@ public static class TokensIEnumerableExtensions
 
         foreach (var tokenInfo in tagTokens)
         {
-            if (openTags.Count != 0 &&Token.TryGetTagTypeByCloseTag(tokenInfo.token, out var closeTagType) && 
+            if (openTags.Count != 0 && 
+                TokenUtilities.TryGetTagTypeByCloseTag(tokenInfo.token, out var closeTagType) && 
                 closeTagType == tagType)
             {
                 yield return (openTags.Dequeue(), tokenInfo.position);
             }
-            else if (Token.TryGetTagTypeByOpenTag(tokenInfo.token, out var openTagType) && openTagType == tagType)
+            else if (TokenUtilities.TryGetTagTypeByOpenTag(tokenInfo.token, out var openTagType) && 
+                     openTagType == tagType)
             {
                 openTags.Enqueue(tokenInfo.position);
             }
@@ -47,7 +49,7 @@ public static class TokensIEnumerableExtensions
                 index++;
             
             while (index < tagPositions.Count && IntervalHelper.IsPointInInterval(checkPair, tagPositions[index]))
-                tokens[tagPositions[index]] = Token.CreateTextToken(tokens[tagPositions[index++]].Content);
+                tokens[tagPositions[index]] = TokenUtilities.CreateTextToken(tokens[tagPositions[index++]].Content);
         }
     }
 
@@ -71,7 +73,7 @@ public static class TokensIEnumerableExtensions
     private static void DisableTagTokenPair(IList<Token> handledTokens, (int left, int right) tagTokenPair)
     {
         var (left, right) = tagTokenPair;
-        handledTokens[left] = Token.CreateTextToken(handledTokens[left].Content);
-        handledTokens[right] = Token.CreateTextToken(handledTokens[right].Content);
+        handledTokens[left] = TokenUtilities.CreateTextToken(handledTokens[left].Content);
+        handledTokens[right] = TokenUtilities.CreateTextToken(handledTokens[right].Content);
     }
 }
