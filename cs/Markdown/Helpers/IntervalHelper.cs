@@ -14,4 +14,7 @@ public static class IntervalHelper
 
     public static bool IsPartOfInterval((int left, int right) interval, (int left, int right) innerInterval) =>
         interval.left <= innerInterval.left && interval.right >= innerInterval.right;
+    
+    public static bool IsPointInInterval((int left, int right) interval, int position) => 
+        position > interval.left && position < interval.right;
 }
