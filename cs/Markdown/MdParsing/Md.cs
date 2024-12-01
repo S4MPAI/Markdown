@@ -19,6 +19,7 @@ public class Md
                 new EscapeTokenApplyHandler(), 
                 new IncorrectTagTokensHandler(),
                 new UnderscoreInNumberHandler(),
+                new TagsPartsInTagHandler(TagType.LinkValue),
                 new StrongTagsHandler(),
                 new TagTokensIntersectsHandler(TagType.Italic, TagType.Strong),
                 new NonPairTagTokensHandler(),
