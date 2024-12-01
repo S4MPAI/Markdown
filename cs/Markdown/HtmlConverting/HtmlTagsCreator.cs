@@ -24,7 +24,9 @@ public static class HtmlTagsCreator
             tagBuilder.Append(' ');
             tagBuilder.Append(parameter.Item1);
             tagBuilder.Append('=');
+            tagBuilder.Append('"');
             tagBuilder.Append(parameter.Item2);
+            tagBuilder.Append('"');
         }
 
         tagBuilder.Append('>');
