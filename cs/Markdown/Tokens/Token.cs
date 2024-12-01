@@ -9,7 +9,9 @@ public struct Token : IEquatable<Token>
     [
         new HeaderTag(),
         new ItalicTag(),
-        new StrongTag()
+        new StrongTag(),
+        new LinkTextTag(),
+        new LinkValueTag()
     ];
 
     private static readonly HashSet<char> SeparatorSymbols = ['\\', ',', '.', ';', '/'];
