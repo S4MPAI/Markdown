@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Markdown.MdParsing;
 using NUnit.Framework;
 
@@ -14,7 +15,7 @@ public class MdTests
         return md.Render(text);
     }
 
-    private static readonly object[] RenderTestCases =
+    private static readonly TestCaseData[] RenderTestCases =
     {
         new TestCaseData("Текст, _окруженный с двух сторон_ одинарными символами подчерка")
             .Returns("Текст, <em>окруженный с двух сторон</em> одинарными символами подчерка")
@@ -77,4 +78,16 @@ public class MdTests
             .Returns("Теги внутри тега ссылки не работают _<a href=\"https://github.com_/\">Github</a>")
             .SetName("LinkValueWithTagsInContent"),
     };
+
+    [Test]
+    public void Render_ShouldReturnRenderedFile()
+    {
+        var markdownText = File.ReadAllText("Files/MarkdownSpec.md");
+        var md = new Md();
+        
+        var actualText = md.Render(markdownText);
+        var expectedText = File.ReadAllText("Files/ExpectedMarkdownSpec.md");
+        
+        actualText.Should().Be(expectedText);
+    }
 }

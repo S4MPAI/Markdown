@@ -17,4 +17,13 @@
       <ProjectReference Include="..\..\Markdown\Markdown.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Files\ExpectedMarkdownSpec.md">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Files\MarkdownSpec.md">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
