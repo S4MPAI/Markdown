@@ -9,16 +9,17 @@ public static class HtmlTagsCreator
     {
         { TagType.Italic, "em" },
         { TagType.Header, "h1" },
-        { TagType.Strong, "strong" }
+        { TagType.Strong, "strong" },
+        { TagType.LinkText, "a" },
     };
 
-    public static string CreateOpenTag(TagType tagType, List<(string, string)>? parameters = null)
+    public static string CreateOpenTag(TagType tagType, params (string, string)[] parameters)
     {
         var tagBuilder = new StringBuilder();
         tagBuilder.Append('<');
         tagBuilder.Append(Tags[tagType]);
         
-        foreach (var parameter in parameters ?? new())
+        foreach (var parameter in parameters)
         {
             tagBuilder.Append(' ');
             tagBuilder.Append(parameter.Item1);

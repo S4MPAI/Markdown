@@ -16,6 +16,7 @@ public class TokensToHtmlConverter : ITokensConverter
             new HeaderTagConverter(),
             new ItalicTagConverter(),
             new StrongTagConverter(),
+            new LinkTagConverter()
         }.ToDictionary<BaseHtmlTagConverter, TagType, IHtmlTagConverter>(
             key => key.HandledTag, 
             value => value);
