@@ -15,13 +15,21 @@ public class LinkTagConverter() : BaseHtmlTagConverter(TagType.LinkText)
         var currentPosition = start;
 
         while (!IsCloseTagOfNeededTagType(tokens, currentPosition, TagType.LinkText))
-            linkTextBuilder.Append(tokens[currentPosition++].Content);
+        {
+            if (Token.TryGetTagTypeByOpenTag(tokens[currentPosition], out var tagType))
+            {
+                var convertedString = ConvertTokensToHtmlTextInTag(converters, tokens, tagType, ref currentPosition);
+                linkTextBuilder.Append(convertedString);
+            }
+            else
+                linkTextBuilder.Append(tokens[currentPosition].Content);
+            currentPosition++;
+        }
 
-        readTokens = currentPosition - start;
-        currentPosition++;
+        readTokens = ++currentPosition - start;
         if (currentPosition >= tokens.Count ||
             tokens[currentPosition].Type != TokenType.Tag ||
-            Token.TryGetTagTypeByOpenTag(tokens[currentPosition], out var nextTagType) ||
+            !Token.TryGetTagTypeByOpenTag(tokens[currentPosition], out var nextTagType) ||
             nextTagType != TagType.LinkValue)
         {
             return linkTextBuilder.ToString();
@@ -32,10 +40,11 @@ public class LinkTagConverter() : BaseHtmlTagConverter(TagType.LinkText)
         while (!IsCloseTagOfNeededTagType(tokens, currentPosition, TagType.LinkValue))
             linkValueBuilder.Append(tokens[currentPosition++].Content);
 
-        return HtmlTagsCreator.CreateOpenTag(TagType.LinkValue, ("href", linkValueBuilder.ToString())) +
+        readTokens = currentPosition - start + 1;
+        return HtmlTagsCreator.CreateOpenTag(TagType.LinkText, ("href", linkValueBuilder.ToString())) +
                linkTextBuilder +
-               HtmlTagsCreator.CreateCloseTag(TagType.LinkValue);
-}
+               HtmlTagsCreator.CreateCloseTag(TagType.LinkText);
+    }
 
     private static bool IsCloseTagOfNeededTagType(IReadOnlyList<Token> tokens, int position, TagType neededTagType)
     {
