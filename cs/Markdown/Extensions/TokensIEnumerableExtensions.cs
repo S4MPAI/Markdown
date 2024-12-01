@@ -1,3 +1,4 @@
+using Markdown.Helpers;
 using Markdown.Tokens;
 
 namespace Markdown.Extensions;
@@ -10,6 +11,9 @@ public static class TokensIEnumerableExtensions
         tokens
             .Select((t, i) => (position: i, token: t))
             .Where(tokenInfo => tagTypes.Any(type => Token.IsTagToken(tokenInfo.token, type)));
+    
+    public static IEnumerable<(int position, Token token)> GetAllTagTypesTokens(this IEnumerable<Token> tokens) => 
+        tokens.GetTagTypesTokens(Enum.GetValues<TagType>());
 
     public static IEnumerable<(int left, int right)> GetTagsPairsOfTag(
         this IEnumerable<(int position, Token token)> tagTokens,
@@ -31,6 +35,22 @@ public static class TokensIEnumerableExtensions
         }
     }
 
+    public static void DisableTagTokensInPairs(
+        this IList<Token> tokens,
+        IReadOnlyList<(int left, int right)> checkPairs,
+        IReadOnlyList<int> tagPositions)
+    {
+        var index = 0;
+        foreach (var checkPair in checkPairs)
+        {
+            while (index < tagPositions.Count && tagPositions[index] <= checkPair.left)
+                index++;
+            
+            while (index < tagPositions.Count && IntervalHelper.IsPointInInterval(checkPair, tagPositions[index]))
+                tokens[tagPositions[index]] = Token.CreateTextToken(tokens[tagPositions[index++]].Content);
+        }
+    }
+
     public static void DisableTagTokensPairsBy(
         this IList<Token> tokens,
         IReadOnlyList<(int left, int right)> checkPairs,
@@ -38,13 +58,13 @@ public static class TokensIEnumerableExtensions
         Func<(int left, int right), (int left, int right), bool> predicate)
     {
         var pairIndex = 0;
-        foreach (var firstPair in checkPairs)
+        foreach (var checkPair in checkPairs)
         {
-            while (pairIndex < disablePairs.Count && predicate(firstPair, disablePairs[pairIndex]))
-            {
-                DisableTagTokenPair(tokens, disablePairs[pairIndex]);
+            while (pairIndex < disablePairs.Count && disablePairs[pairIndex].right < checkPair.left)
                 pairIndex++;
-            }
+            
+            while (pairIndex < disablePairs.Count && predicate(checkPair, disablePairs[pairIndex]))
+                DisableTagTokenPair(tokens, disablePairs[pairIndex++]);
         }
     }
     
