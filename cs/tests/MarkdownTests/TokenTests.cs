@@ -10,7 +10,7 @@ public class TokenTests
     [TestCase("word")]
     [TestCase("///'][.,m1234/")]
     [TestCase("firstWord secondWord")]
-    public void CreateWordToken_ShouldReturnWordToken(string word)
+    public void CreateTextToken_ShouldReturnWordToken(string word)
     {
         var actualResult = Token.CreateTextToken(word);
 
@@ -34,6 +34,17 @@ public class TokenTests
     {
         Token.TryCreateTagToken(content, out var actualToken).Should().BeTrue();
         AssertToken(actualToken, content, TokenType.Tag);
+    }
+
+    [TestCase("\\")]
+    [TestCase(",")]
+    [TestCase(".")]
+    [TestCase(";")]
+    [TestCase("/")]
+    public void TryCreateSeparatorToken_ShouldReturnSeparatorToken(string content)
+    {
+        Token.TryCreateSeparatorToken(content, out var actualToken).Should().BeTrue();
+        AssertToken(actualToken, content, TokenType.Separator);
     }
     
     private static void AssertToken(
