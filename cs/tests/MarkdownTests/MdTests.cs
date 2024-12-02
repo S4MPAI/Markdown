@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 using FluentAssertions;
 using Markdown.MdParsing;
@@ -8,7 +9,8 @@ namespace MarkdownTests;
 [TestFixture]
 public class MdTests
 {
-    private const string TestsFilesDirectory = "Files"; 
+    private const string TestsFilesDirectory = "Files";
+    private const double ExpectedExecutionTimeOnSymbolInMilliseconds = 0.0025;
     
     [TestCaseSource(nameof(RenderTestCases))]
     public string Render_ShouldReturnExpectedResult(string text)
@@ -93,21 +95,39 @@ public class MdTests
         
         actualText.Should().Be(expectedText);
     }
-
-    [Test]
-    [MaxTime(5000)]
-    public void Render_ShouldWorkOnLineal()
+    
+    [TestCase(100)]
+    [TestCase(1000)]
+    public void Render_ShouldWorkOnLineal(int count)
     {
-        var markdownSpecText = File.ReadAllText("Files/MarkdownSpec.md");
-        var textBuilder = new StringBuilder();
+        var markdownSpecText = File.ReadAllText(Path.Combine(TestsFilesDirectory, "MarkdownSpec.md"));
+        var text = RepeatText(markdownSpecText, count);
         var md = new Md();
+        
+        var actualExecutionTime = GetExecutionTimeInMilliseconds(() => md.Render(text));
+        var executionTimeLimit = ExpectedExecutionTimeOnSymbolInMilliseconds * text.Length;
 
-        for (var i = 0; i < 1000; i++)
+        actualExecutionTime.Should().BeLessThanOrEqualTo(executionTimeLimit);
+    }
+
+    private static string RepeatText(string text, int count = 1)
+    {
+        var textBuilder = new StringBuilder();
+        for (var i = 0; i < count; i++)
         {
-            textBuilder.AppendLine(markdownSpecText);
+            textBuilder.AppendLine(text);
             textBuilder.Append('\n');
         }
         
-        md.Render(textBuilder.ToString());
+        return textBuilder.ToString();
+    }
+
+    private static double GetExecutionTimeInMilliseconds(Action action)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        action();
+        stopwatch.Stop();
+        
+        return stopwatch.ElapsedMilliseconds;
     }
 }
