@@ -7,6 +7,8 @@ namespace MarkdownTests;
 [TestFixture]
 public class MdTests
 {
+    private const string TestsFilesDirectory = "Files"; 
+    
     [TestCaseSource(nameof(RenderTestCases))]
     public string Render_ShouldReturnExpectedResult(string text)
     {
@@ -82,12 +84,22 @@ public class MdTests
     [Test]
     public void Render_ShouldReturnRenderedFile()
     {
-        var markdownText = File.ReadAllText("Files/MarkdownSpec.md");
+        var markdownText = File.ReadAllText( Path.Combine(TestsFilesDirectory, "MarkdownSpec.md"));
         var md = new Md();
         
         var actualText = md.Render(markdownText);
-        var expectedText = File.ReadAllText("Files/ExpectedMarkdownSpec.md");
+        var expectedText = File.ReadAllText( Path.Combine(TestsFilesDirectory, "ExpectedMarkdownSpec.md"));
         
         actualText.Should().Be(expectedText);
+    }
+
+    [Test]
+    [CancelAfter(50)]
+    public void Render_ShouldWorkOnLinealWithMarkdownSpec()
+    {
+        var markdownText = File.ReadAllText("Files/MarkdownSpec.md");
+        var md = new Md();
+        
+        md.Render(markdownText);
     }
 }

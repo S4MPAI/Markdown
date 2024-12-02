@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace MarkdownTests;
 
-public class TokenTests
+public class TokenUtilitiesTests
 {
     [TestCase("word")]
     [TestCase("///'][.,m1234/")]
