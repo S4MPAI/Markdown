@@ -1,3 +1,4 @@
+using System.Text;
 using FluentAssertions;
 using Markdown.MdParsing;
 using NUnit.Framework;
@@ -88,18 +89,25 @@ public class MdTests
         var md = new Md();
         
         var actualText = md.Render(markdownText);
-        var expectedText = File.ReadAllText( Path.Combine(TestsFilesDirectory, "ExpectedMarkdownSpec.md"));
+        var expectedText = File.ReadAllText( Path.Combine(TestsFilesDirectory, "ExpectedMarkdownSpec.html"));
         
         actualText.Should().Be(expectedText);
     }
 
     [Test]
-    [CancelAfter(50)]
-    public void Render_ShouldWorkOnLinealWithMarkdownSpec()
+    [MaxTime(5000)]
+    public void Render_ShouldWorkOnLineal()
     {
-        var markdownText = File.ReadAllText("Files/MarkdownSpec.md");
+        var markdownSpecText = File.ReadAllText("Files/MarkdownSpec.md");
+        var textBuilder = new StringBuilder();
         var md = new Md();
+
+        for (var i = 0; i < 1000; i++)
+        {
+            textBuilder.AppendLine(markdownSpecText);
+            textBuilder.Append('\n');
+        }
         
-        md.Render(markdownText);
+        md.Render(textBuilder.ToString());
     }
 }

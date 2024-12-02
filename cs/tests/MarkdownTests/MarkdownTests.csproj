@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Files\ExpectedMarkdownSpec.md">
+      <None Update="Files\ExpectedMarkdownSpec.html">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="Files\MarkdownSpec.md">
