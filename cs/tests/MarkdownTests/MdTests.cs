@@ -114,10 +114,7 @@ public class MdTests
     {
         var textBuilder = new StringBuilder();
         for (var i = 0; i < count; i++)
-        {
             textBuilder.AppendLine(text);
-            textBuilder.Append('\n');
-        }
         
         return textBuilder.ToString();
     }
